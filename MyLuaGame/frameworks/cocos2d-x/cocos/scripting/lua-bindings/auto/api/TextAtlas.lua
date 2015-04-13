@@ -7,7 +7,7 @@
 --------------------------------
 -- @function [parent=#TextAtlas] getStringLength 
 -- @param self
--- @return long#long ret (return value: long)
+-- @return int#int ret (return value: int)
         
 --------------------------------
 -- @function [parent=#TextAtlas] getString 

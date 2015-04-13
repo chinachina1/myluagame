@@ -31,14 +31,14 @@
 -- @function [parent=#SpriteBatchNode] lowestAtlasIndexInChild 
 -- @param self
 -- @param #cc.Sprite sprite
--- @return long#long ret (return value: long)
+-- @return int#int ret (return value: int)
         
 --------------------------------
 -- @function [parent=#SpriteBatchNode] atlasIndexForChild 
 -- @param self
 -- @param #cc.Sprite sprite
 -- @param #int int
--- @return long#long ret (return value: long)
+-- @return int#int ret (return value: int)
         
 --------------------------------
 -- @function [parent=#SpriteBatchNode] setTextureAtlas 
@@ -63,7 +63,7 @@
 -- @function [parent=#SpriteBatchNode] insertQuadFromSprite 
 -- @param self
 -- @param #cc.Sprite sprite
--- @param #long long
+-- @param #int int
         
 --------------------------------
 -- @function [parent=#SpriteBatchNode] setTexture 
@@ -74,19 +74,19 @@
 -- @function [parent=#SpriteBatchNode] rebuildIndexInOrder 
 -- @param self
 -- @param #cc.Sprite sprite
--- @param #long long
--- @return long#long ret (return value: long)
+-- @param #int int
+-- @return int#int ret (return value: int)
         
 --------------------------------
 -- @function [parent=#SpriteBatchNode] highestAtlasIndexInChild 
 -- @param self
 -- @param #cc.Sprite sprite
--- @return long#long ret (return value: long)
+-- @return int#int ret (return value: int)
         
 --------------------------------
 -- @function [parent=#SpriteBatchNode] removeChildAtIndex 
 -- @param self
--- @param #long long
+-- @param #int int
 -- @param #bool bool
         
 --------------------------------
@@ -98,14 +98,14 @@
 -- @function [parent=#SpriteBatchNode] create 
 -- @param self
 -- @param #string str
--- @param #long long
+-- @param #int int
 -- @return SpriteBatchNode#SpriteBatchNode ret (return value: cc.SpriteBatchNode)
         
 --------------------------------
 -- @function [parent=#SpriteBatchNode] createWithTexture 
 -- @param self
 -- @param #cc.Texture2D texture2d
--- @param #long long
+-- @param #int int
 -- @return SpriteBatchNode#SpriteBatchNode ret (return value: cc.SpriteBatchNode)
         
 --------------------------------

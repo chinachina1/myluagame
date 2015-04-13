@@ -11,7 +11,7 @@
 --------------------------------
 -- @function [parent=#Mesh] getMeshVertexAttribCount 
 -- @param self
--- @return long#long ret (return value: long)
+-- @return int#int ret (return value: int)
         
 --------------------------------
 -- @function [parent=#Mesh] getIndexFormat 
@@ -31,7 +31,7 @@
 --------------------------------
 -- @function [parent=#Mesh] getIndexCount 
 -- @param self
--- @return long#long ret (return value: long)
+-- @return int#int ret (return value: int)
         
 --------------------------------
 -- @function [parent=#Mesh] getVertexBuffer 

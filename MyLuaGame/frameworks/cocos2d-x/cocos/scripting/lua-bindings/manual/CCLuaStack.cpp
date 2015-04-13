@@ -73,6 +73,7 @@ extern "C" {
 #include "lua_cocos2dx_ui_manual.hpp"
 #include "lua_cocos2dx_experimental_auto.hpp"
 #include "lua_cocos2dx_experimental_manual.hpp"
+#include "lua_custom_api_auto.hpp"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include "lua_cocos2dx_experimental_video_auto.hpp"
 #include "lua_cocos2dx_experimental_video_manual.hpp"
@@ -178,6 +179,7 @@ bool LuaStack::init(void)
     register_all_cocos2dx_spine(_state);
     register_all_cocos2dx_spine_manual(_state);
     register_glnode_manual(_state);
+	register_all_custom_api(_state);
 #if CC_USE_PHYSICS
     register_all_cocos2dx_physics(_state);
     register_all_cocos2dx_physics_manual(_state);

@@ -70,7 +70,7 @@
 --------------------------------
 -- @function [parent=#Sprite] getAtlasIndex 
 -- @param self
--- @return long#long ret (return value: long)
+-- @return int#int ret (return value: int)
         
 --------------------------------
 -- @function [parent=#Sprite] setBatchNode 
@@ -81,7 +81,7 @@
 -- @function [parent=#Sprite] setDisplayFrameWithAnimationName 
 -- @param self
 -- @param #string str
--- @param #long long
+-- @param #int int
         
 --------------------------------
 -- @function [parent=#Sprite] setTextureAtlas 
@@ -101,7 +101,7 @@
 --------------------------------
 -- @function [parent=#Sprite] setAtlasIndex 
 -- @param self
--- @param #long long
+-- @param #int int
         
 --------------------------------
 -- @function [parent=#Sprite] setDirty 

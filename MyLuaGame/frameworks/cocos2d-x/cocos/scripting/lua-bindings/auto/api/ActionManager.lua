@@ -42,7 +42,7 @@
 -- @function [parent=#ActionManager] getNumberOfRunningActionsInTarget 
 -- @param self
 -- @param #cc.Node node
--- @return long#long ret (return value: long)
+-- @return int#int ret (return value: int)
         
 --------------------------------
 -- @function [parent=#ActionManager] removeAllActionsFromTarget 

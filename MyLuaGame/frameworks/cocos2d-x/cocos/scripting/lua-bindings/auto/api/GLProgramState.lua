@@ -34,7 +34,7 @@
 --------------------------------
 -- @function [parent=#GLProgramState] getUniformCount 
 -- @param self
--- @return long#long ret (return value: long)
+-- @return int#int ret (return value: int)
         
 --------------------------------
 -- @function [parent=#GLProgramState] applyAttributes 
@@ -67,7 +67,7 @@
 --------------------------------
 -- @function [parent=#GLProgramState] getVertexAttribCount 
 -- @param self
--- @return long#long ret (return value: long)
+-- @return int#int ret (return value: int)
         
 --------------------------------
 -- @overload self, int, vec4_table         
