@@ -12,7 +12,6 @@ function __G__TRACKBACK__(msg)
     cclog("LUA ERROR: " .. tostring(msg) .. "\n")
     cclog(debug.traceback())
     cclog("----------------------------------------")
-    return msg
 end
 
 local function main()
@@ -20,7 +19,6 @@ local function main()
     -- avoid memory leak
     collectgarbage("setpause", 100)
     collectgarbage("setstepmul", 5000)
-
     -- initialize director
     local director = cc.Director:getInstance()
     local glview = director:getOpenGLView()
@@ -37,8 +35,8 @@ local function main()
     --set FPS. the default value is 1.0/60 if you don't call this
     director:setAnimationInterval(1.0 / 60)
 
-	cc.FileUtils:getInstance():addSearchPath("src")
-	cc.FileUtils:getInstance():addSearchPath("res")
+	cc.FileUtils:getInstance():addSearchResolutionsOrder("src");
+	cc.FileUtils:getInstance():addSearchResolutionsOrder("res");
 	local schedulerID = 0
     --support debug
     local targetPlatform = cc.Application:getInstance():getTargetPlatform()
@@ -222,16 +220,39 @@ local function main()
     end
 
     -- play background music, preload effect
-    local bgMusicPath = cc.FileUtils:getInstance():fullPathForFilename("background.mp3") 
+
+    -- uncomment below for the BlackBerry version
+    local bgMusicPath = nil 
+    if (cc.PLATFORM_OS_IPHONE == targetPlatform) or (cc.PLATFORM_OS_IPAD == targetPlatform) then
+        bgMusicPath = cc.FileUtils:getInstance():fullPathForFilename("res/background.caf")
+    else
+        bgMusicPath = cc.FileUtils:getInstance():fullPathForFilename("res/background.mp3")
+    end
     cc.SimpleAudioEngine:getInstance():playMusic(bgMusicPath, true)
     local effectPath = cc.FileUtils:getInstance():fullPathForFilename("effect1.wav")
     cc.SimpleAudioEngine:getInstance():preloadEffect(effectPath)
-
+		cc.FileUtils:getInstance():addSearchPath("/mnt/sdcard/a123")
+		print("set path ok")
+		local first = require "src/first"
     -- run
     local sceneGame = cc.Scene:create()
-    sceneGame:addChild(createLayerFarm())
-    sceneGame:addChild(createLayerMenu())
-	
+    sceneGame:addChild(first())
+		print("print first path", cc.FileUtils:getInstance():fullPathForFilename("src/first.lua"), first, first())
+    --sceneGame:addChild(createLayerFarm())
+    --sceneGame:addChild(createLayerMenu())
+    print("pppppppppppppp", my, my.FileUnit, my.FileUnit.new)
+	local ff = my.FileUnit:new("hh.txt")
+    --ff:settestdata()
+    --ff:settestdata()
+    --ff:savedata()
+    print(ff:getbaseurl())
+    print(ff:gettitle())
+    local celllist = ff:getcelllist()
+    for k,v in pairs(celllist) do
+        --print(k, v, v:getrowname(), v:geturl(), v:getcontent())
+    end
+    --ff:testchangefile()
+    ff:destroy()
 	if cc.Director:getInstance():getRunningScene() then
 		cc.Director:getInstance():replaceScene(sceneGame)
 	else
@@ -241,7 +262,4 @@ local function main()
 end
 
 
-local status, msg = xpcall(main, __G__TRACKBACK__)
-if not status then
-    error(msg)
-end
+xpcall(main, __G__TRACKBACK__)
