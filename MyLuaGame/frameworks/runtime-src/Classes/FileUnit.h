@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include <string>
 #include <vector>
+#include "fileeditsys.h"
 USING_NS_CC;
 class celldef : public Ref
 {
@@ -14,20 +15,18 @@ public:
 		return c;
 	}
 public:
-	std::string m_rowname;
-	std::string m_url;
-	unsigned long m_begin;
-	unsigned long m_size;
+	std::string m_path;
+	std::string m_title;
 	std::string m_content;
 
-	std::string getrowname() {return m_rowname;}
-	std::string geturl() {return m_url;}
+	std::string getpath() {return m_path;}
+	std::string gettitle() {return m_title;}
 	std::string getcontent() {return m_content;}
-	void setrowname(std::string l) {m_rowname = l;}
-	void seturl(std::string l) {m_url = l;}
+	void setpath(std::string l) {m_path = l;}
+	void settitle(std::string l) {m_title = l;}
 	void setcontent(std::string l) {m_content = l;}
 };
-class FileUnit
+class FileUnit//index->dir->bookname->bookchapter->bookcontent
 {
 public:
 	FileUnit(std::string filename);
@@ -55,8 +54,7 @@ public:
 	void destroy(){delete this;}
 private:
 	std::string m_filename;
-	std::string m_baseurl;
-	std::string m_title;
+	fileeditsys* m_pfileeditsys;
 	union
 	{
 		struct

@@ -22,6 +22,9 @@
     <ClInclude Include="..\Classes\FileUnit.h">
       <Filter>Classes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\fileeditsys.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
@@ -31,6 +34,9 @@
       <Filter>win32</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\FileUnit.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\fileeditsys.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,36 +1,25 @@
 #include "FileUnit.h"
+using namespace std;
 
 FileUnit::FileUnit(std::string filename)
 {
 	m_filename = "D:/" + filename; 
-	FILE *file = fopen(m_filename.c_str(), "rb");
-	if (file)
+	m_pfileeditsys = fileeditsys::create(m_filename);
+	if (m_pfileeditsys)
 	{
-		fseek(file, 0, SEEK_END);
-		unsigned long filesize = ftell(file);
-		if (filesize == 0)
+		if (m_pfileeditsys->filedataisempty())
 		{
-			fclose(file);
-			return;
+			m_pfileeditsys->addfiledata(NULL, "index", "");
 		}
-		fseek(file, 0, SEEK_SET);
-		std::vector<char> filecontent;
-		filecontent.resize(filesize, 0);
-		unsigned long readlen = fread(&(filecontent[0]), sizeof(char), filesize, file);
-		if (readlen != filesize)
-		{
-
-		}
-		else
-		{
-			loaddata(filecontent);
-		}
-		fclose(file);
 	}
 }
 
 FileUnit::~FileUnit()
 {
+	if (m_pfileeditsys)
+	{
+		delete m_pfileeditsys;
+	}
 }
 
 bool FileUnit::isfileexit()
