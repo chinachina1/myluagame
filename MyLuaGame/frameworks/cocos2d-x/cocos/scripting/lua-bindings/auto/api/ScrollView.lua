@@ -250,7 +250,7 @@
 --------------------------------
 -- @function [parent=#ScrollView] getChildrenCount 
 -- @param self
--- @return int#int ret (return value: int)
+-- @return long#long ret (return value: long)
         
 --------------------------------
 -- @function [parent=#ScrollView] setLayoutType 

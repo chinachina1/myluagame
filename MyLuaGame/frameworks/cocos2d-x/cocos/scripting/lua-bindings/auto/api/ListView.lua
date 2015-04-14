@@ -8,7 +8,7 @@
 -- @function [parent=#ListView] getIndex 
 -- @param self
 -- @param #ccui.Widget widget
--- @return int#int ret (return value: int)
+-- @return long#long ret (return value: long)
         
 --------------------------------
 -- @function [parent=#ListView] removeAllItems 
@@ -32,17 +32,17 @@
 --------------------------------
 -- @function [parent=#ListView] removeItem 
 -- @param self
--- @param #int int
+-- @param #long long
         
 --------------------------------
 -- @function [parent=#ListView] getCurSelectedIndex 
 -- @param self
--- @return int#int ret (return value: int)
+-- @return long#long ret (return value: long)
         
 --------------------------------
 -- @function [parent=#ListView] insertDefaultItem 
 -- @param self
--- @param #int int
+-- @param #long long
         
 --------------------------------
 -- @function [parent=#ListView] requestRefreshView 
@@ -74,7 +74,7 @@
 --------------------------------
 -- @function [parent=#ListView] getItem 
 -- @param self
--- @param #int int
+-- @param #long long
 -- @return Widget#Widget ret (return value: ccui.Widget)
         
 --------------------------------
@@ -94,7 +94,7 @@
 -- @function [parent=#ListView] insertCustomItem 
 -- @param self
 -- @param #ccui.Widget widget
--- @param #int int
+-- @param #long long
         
 --------------------------------
 -- @function [parent=#ListView] create 

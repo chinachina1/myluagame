@@ -26,7 +26,7 @@
 --------------------------------
 -- @function [parent=#AtlasNode] getQuadsToDraw 
 -- @param self
--- @return int#int ret (return value: int)
+-- @return long#long ret (return value: long)
         
 --------------------------------
 -- @function [parent=#AtlasNode] setTexture 
@@ -36,7 +36,7 @@
 --------------------------------
 -- @function [parent=#AtlasNode] setQuadsToDraw 
 -- @param self
--- @param #int int
+-- @param #long long
         
 --------------------------------
 -- @function [parent=#AtlasNode] create 

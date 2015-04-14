@@ -11,12 +11,12 @@
 --------------------------------
 -- @function [parent=#TableViewCell] getIdx 
 -- @param self
--- @return int#int ret (return value: int)
+-- @return long#long ret (return value: long)
         
 --------------------------------
 -- @function [parent=#TableViewCell] setIdx 
 -- @param self
--- @param #int int
+-- @param #long long
         
 --------------------------------
 -- @function [parent=#TableViewCell] create 

@@ -7,7 +7,7 @@
 --------------------------------
 -- @function [parent=#Text] getStringLength 
 -- @param self
--- @return int#int ret (return value: int)
+-- @return long#long ret (return value: long)
         
 --------------------------------
 -- @function [parent=#Text] setFontName 

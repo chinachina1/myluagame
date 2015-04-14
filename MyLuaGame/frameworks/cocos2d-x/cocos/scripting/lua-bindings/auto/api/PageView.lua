@@ -7,19 +7,19 @@
 --------------------------------
 -- @function [parent=#PageView] getCurPageIndex 
 -- @param self
--- @return int#int ret (return value: int)
+-- @return long#long ret (return value: long)
         
 --------------------------------
 -- @function [parent=#PageView] addWidgetToPage 
 -- @param self
 -- @param #ccui.Widget widget
--- @param #int int
+-- @param #long long
 -- @param #bool bool
         
 --------------------------------
 -- @function [parent=#PageView] getPage 
 -- @param self
--- @param #int int
+-- @param #long long
 -- @return Layout#Layout ret (return value: ccui.Layout)
         
 --------------------------------
@@ -41,12 +41,12 @@
 --------------------------------
 -- @function [parent=#PageView] scrollToPage 
 -- @param self
--- @param #int int
+-- @param #long long
         
 --------------------------------
 -- @function [parent=#PageView] removePageAtIndex 
 -- @param self
--- @param #int int
+-- @param #long long
         
 --------------------------------
 -- @function [parent=#PageView] getPages 
