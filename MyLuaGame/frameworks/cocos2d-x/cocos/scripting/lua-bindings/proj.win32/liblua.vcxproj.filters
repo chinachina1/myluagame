@@ -171,6 +171,9 @@
     <ClCompile Include="..\auto\lua_cocos2dx_experimental_auto.cpp">
       <Filter>auto</Filter>
     </ClCompile>
+    <ClCompile Include="..\auto\lua_custom_api_auto.cpp">
+      <Filter>auto</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\auto\lua_cocos2dx_auto.hpp">
@@ -324,6 +327,9 @@
       <Filter>manual</Filter>
     </ClInclude>
     <ClInclude Include="..\auto\lua_cocos2dx_experimental_auto.hpp">
+      <Filter>auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\auto\lua_custom_api_auto.hpp">
       <Filter>auto</Filter>
     </ClInclude>
   </ItemGroup>
