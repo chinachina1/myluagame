@@ -1,86 +1,61 @@
 
 --------------------------------
 -- @module FileUnit
+-- @extend Ref
 -- @parent_module my
 
 --------------------------------
--- @function [parent=#FileUnit] setbaseurl 
--- @param self
--- @param #string str
-        
---------------------------------
--- @function [parent=#FileUnit] getbaseurl 
--- @param self
--- @return string#string ret (return value: string)
-        
---------------------------------
--- @function [parent=#FileUnit] isrowexist 
+-- @function [parent=#FileUnit] createdir 
 -- @param self
 -- @param #string str
 -- @return bool#bool ret (return value: bool)
         
 --------------------------------
--- @function [parent=#FileUnit] clear 
+-- @function [parent=#FileUnit] gotorootdir 
 -- @param self
         
 --------------------------------
--- @function [parent=#FileUnit] savedata 
--- @param self
-        
---------------------------------
--- @function [parent=#FileUnit] testchangefile 
--- @param self
-        
---------------------------------
--- @function [parent=#FileUnit] getrowcontent 
+-- @function [parent=#FileUnit] openfile 
 -- @param self
 -- @param #string str
--- @return string#string ret (return value: string)
+-- @return bool#bool ret (return value: bool)
         
 --------------------------------
--- @function [parent=#FileUnit] getcelllist 
+-- @function [parent=#FileUnit] gotoupdir 
+-- @param self
+        
+--------------------------------
+-- @function [parent=#FileUnit] getfilelist 
 -- @param self
 -- @return array_table#array_table ret (return value: array_table)
         
 --------------------------------
--- @function [parent=#FileUnit] addrow 
+-- @function [parent=#FileUnit] createfile 
 -- @param self
 -- @param #string str
 -- @param #string str
--- @param #string str
+-- @return bool#bool ret (return value: bool)
         
 --------------------------------
--- @function [parent=#FileUnit] gettitle 
+-- @function [parent=#FileUnit] getcurfile 
 -- @param self
 -- @return string#string ret (return value: string)
         
 --------------------------------
--- @function [parent=#FileUnit] isfileexit 
+-- @function [parent=#FileUnit] opendir 
 -- @param self
+-- @param #string str
 -- @return bool#bool ret (return value: bool)
         
 --------------------------------
--- @function [parent=#FileUnit] destroy 
--- @param self
-        
---------------------------------
--- @function [parent=#FileUnit] setrow 
--- @param self
--- @param #string str
--- @param #string str
-        
---------------------------------
--- @function [parent=#FileUnit] settitle 
+-- @function [parent=#FileUnit] runcommand 
 -- @param self
 -- @param #string str
         
 --------------------------------
--- @function [parent=#FileUnit] settestdata 
--- @param self
-        
---------------------------------
--- @function [parent=#FileUnit] FileUnit 
+-- @function [parent=#FileUnit] create 
 -- @param self
 -- @param #string str
+-- @return FileUnit#FileUnit ret (return value: FileUnit)
         
 return nil

@@ -5,29 +5,29 @@
 -- @parent_module my
 
 --------------------------------
--- @function [parent=#celldef] geturl 
--- @param self
--- @return string#string ret (return value: string)
-        
---------------------------------
--- @function [parent=#celldef] getrowname 
--- @param self
--- @return string#string ret (return value: string)
-        
---------------------------------
--- @function [parent=#celldef] seturl 
+-- @function [parent=#celldef] settitle 
 -- @param self
 -- @param #string str
         
 --------------------------------
--- @function [parent=#celldef] setrowname 
+-- @function [parent=#celldef] getpath 
 -- @param self
--- @param #string str
+-- @return string#string ret (return value: string)
+        
+--------------------------------
+-- @function [parent=#celldef] gettitle 
+-- @param self
+-- @return string#string ret (return value: string)
         
 --------------------------------
 -- @function [parent=#celldef] getcontent 
 -- @param self
 -- @return string#string ret (return value: string)
+        
+--------------------------------
+-- @function [parent=#celldef] setpath 
+-- @param self
+-- @param #string str
         
 --------------------------------
 -- @function [parent=#celldef] setcontent 

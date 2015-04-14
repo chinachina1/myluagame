@@ -264,7 +264,7 @@ treecellpoint* fileeditsys::findfiledata(vector<string> cmd)
 			return NULL;
 		}
 	}
-	if (pp && pp->_cell.title == *cmd.end())
+	if (pp && pp->_cell.title == cmd.back())
 	{
 		return pp;
 	}

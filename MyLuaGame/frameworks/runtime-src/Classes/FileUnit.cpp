@@ -1,6 +1,11 @@
 #include "FileUnit.h"
 using namespace std;
 
+FileUnit* FileUnit::create(std::string filename)
+{
+	return new FileUnit(filename);
+}
+
 FileUnit::FileUnit(std::string filename)
 {
 	m_filename = "D:/" + filename; 
@@ -9,9 +14,10 @@ FileUnit::FileUnit(std::string filename)
 	{
 		if (m_pfileeditsys->filedataisempty())
 		{
-			m_pfileeditsys->addfiledata(NULL, "index", "");
+			m_pfileeditsys->addfiledata(NULL, "index", "floder");
 		}
 	}
+	m_curpath.push_back("index");
 }
 
 FileUnit::~FileUnit()
@@ -19,174 +25,140 @@ FileUnit::~FileUnit()
 	if (m_pfileeditsys)
 	{
 		delete m_pfileeditsys;
+		m_pfileeditsys = NULL;
 	}
 }
 
-bool FileUnit::isfileexit()
+void FileUnit::runcommand(std::string cmd)
 {
-	return true;
+
 }
 
-void FileUnit::addrow(std::string row, std::string url, std::string content)
+bool FileUnit::createdir(std::string dirname)
 {
-	celldef* cell = new celldef;
-	cell->m_rowname = row;
-	cell->m_url = url;
-	cell->m_begin = 0;
-	cell->m_size = 0;
-	cell->m_content = content;
-	cell->autorelease();
-	m_celllist.pushBack(cell);
-}
-
-void FileUnit::clear()
-{
-	m_celllist.clear();
-}
-
-bool FileUnit::isrowexist(std::string row)
-{
+	if (m_pfileeditsys)
+	{
+		treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
+		if (p && p->_cell.content == "floder")
+		{
+			vector<string> _v(m_curpath.begin(), m_curpath.end());
+			_v.push_back(dirname);
+			treecellpoint* pp = m_pfileeditsys->findfiledata(_v);
+			if (pp)
+			{
+				return false;
+			}
+			m_pfileeditsys->addfiledata(p, dirname, "floder");
+			return true;
+		}
+	}
 	return false;
 }
 
-std::string FileUnit::getrowcontent(std::string row)
+bool FileUnit::createfile(std::string filename, std::string filecontent)
 {
+	if (m_pfileeditsys)
+	{
+		treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
+		if (p && p->_cell.content == "floder")
+		{
+			vector<string> _v(m_curpath.begin(), m_curpath.end());
+			_v.push_back(filename);
+			treecellpoint* pp = m_pfileeditsys->findfiledata(_v);
+			if (pp)
+			{
+				return false;
+			}
+			m_pfileeditsys->addfiledata(p, filename, filecontent);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool FileUnit::opendir(std::string dirname)
+{
+	if (m_pfileeditsys)
+	{
+		vector<string> _v(m_curpath.begin(), m_curpath.end());
+		_v.push_back(dirname);
+		treecellpoint* p = m_pfileeditsys->findfiledata(_v);
+		if (p && p->_cell.content == "floder")
+		{
+			m_curpath.push_back(dirname);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool FileUnit::openfile(std::string filename)
+{
+	if (m_pfileeditsys)
+	{
+		vector<string> _v(m_curpath);
+		_v.push_back(filename);
+		treecellpoint* p = m_pfileeditsys->findfiledata(_v);
+		if (p && p->_cell.content != "floder")
+		{
+			m_curpath.push_back(filename);
+			return true;
+		}
+	}
+	return false;
+}
+
+std::string FileUnit::getcurfile()
+{
+	if (m_pfileeditsys)
+	{
+		treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
+		if (p && p->_cell.content != "floder")
+		{
+			return p->_cell.content;
+		}
+	}
 	return "";
 }
 
-void FileUnit::setrow(std::string row, std::string content)
+void FileUnit::gotoupdir()
 {
+	if (m_curpath.size() > 1)
+	{
+		m_curpath.pop_back();
+	}
 }
 
-void FileUnit::loaddata(std::vector<char> input)
+void FileUnit::gotorootdir()
 {
-	unsigned long len = 0;
-	auto getstring = [&](){
-		std::string str = (char*)(&(input[len]));
-		len = len + str.size() + 1;
-		return str;
-	};
-	auto getunlong = [&](){
-		unionlen.a = input[len + 0];
-		unionlen.b = input[len + 1];
-		unionlen.c = input[len + 2];
-		unionlen.d = input[len + 3];
-		len = len + 4;
-		return unionlen.len;
-	};
-	m_title = getstring();
-	m_baseurl = getstring();
-	unsigned long cellsize = getunlong();
-	//m_celllist.resize(cellsize);
-	//for (auto &cell : m_celllist)
+	while (m_curpath.size() > 1)
+	{
+		m_curpath.pop_back();
+	}
+}
+
+
+Vector<celldef*>& FileUnit::getfilelist()
+{
 	m_celllist.clear();
-	for (unsigned long i = 0; i < cellsize; i++)
+	if (m_pfileeditsys)
 	{
-		celldef* cell = new celldef;
-		cell->m_rowname = getstring();
-		cell->m_url = getstring();
-		cell->m_begin = getunlong();
-		cell->m_size = getunlong();
-		cell->m_content = getstring();
-		cell->autorelease();
-		m_celllist.pushBack(cell);
-	}
-}
-
-void FileUnit::savedata()
-{
-	::remove(m_filename.c_str());
-	FILE *file = fopen(m_filename.c_str(), "wb");
-	if (! file)
-	{
-		return;
-	}
-	auto putstring =[&](std::string str) {
-		fwrite(str.c_str(), sizeof(char), str.size(), file);
-		char a = '\0';
-		fwrite(&a, 1, 1, file);
-	};
-	auto putunlong = [&](unsigned long num) {
-		unionlen.len = num;
-		fwrite(&(unionlen.a), 1, 1, file);
-		fwrite(&(unionlen.b), 1, 1, file);
-		fwrite(&(unionlen.c), 1, 1, file);
-		fwrite(&(unionlen.d), 1, 1, file);
-	};
-	putstring(m_title);
-	putstring(m_baseurl);
-	unsigned long veclen = m_celllist.size();
-	putunlong(veclen);
-	for (unsigned long i = 0; i < veclen; i++)
-	{
-		auto cell = m_celllist.at(i);
-		putstring(cell->m_rowname);
-		putstring(cell->m_url);
-		putunlong(cell->m_begin);
-		putunlong(cell->m_size);
-		putstring(cell->m_content);
-	}
-	fclose(file);
-}
-
-void FileUnit::settestdata()
-{
-	m_baseurl = "www.baidu.com";
-	m_title = "123";
-	//m_celllist.resize(10);
-	//m_celllist.clear();
-	for (unsigned long i = 0; i < 10; i++)
-	{
-		celldef* cell = new celldef;
-		cell->m_rowname = "t";
-		cell->m_url = "123";
-		cell->m_begin = 1;
-		cell->m_size = 2;
-		cell->m_content = "eeee";
-		cell->autorelease();
-		m_celllist.pushBack(cell);
-	}
-}
-
-std::string FileUnit::getbaseurl()
-{
-	return m_baseurl;
-}
-
-std::string FileUnit::gettitle()
-{
-	return m_title;
-}
-
-Vector<celldef*>& FileUnit::getcelllist()
-{
-	return m_celllist;
-}
-
-void FileUnit::setbaseurl(std::string url)
-{
-	m_baseurl = url;
-}
-
-void FileUnit::settitle(std::string title)
-{
-	m_title = title;
-}
-
-void FileUnit::testchangefile()
-{
-	FILE *file = fopen(m_filename.c_str(), "rb+");
-	if (file)
-	{
-		int res = fseek(file, m_title.size() + 1, SEEK_SET);
-		if(res < 0)
+		treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
+		if (p && m_pfileeditsys->readfilechilddata(p))
 		{
-			fclose(file);
-			return;
+			p = p->_child;
+			if (p && m_pfileeditsys->readfileallbrotherdata(p))
+			{
+				treecellpoint* pp = p;
+				while (pp)
+				{
+					celldef* a = celldef::create();
+					a->m_title = pp->_cell.title;
+					m_celllist.pushBack(a);
+					pp = pp->_brother;
+				}
+			}
 		}
-		const char* a = "a";
-		fwrite(a, 1, 1, file);
-		//fprintf(file, "%s",a);
-		fclose(file);
 	}
+	return m_celllist;
 }

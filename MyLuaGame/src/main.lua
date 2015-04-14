@@ -241,18 +241,48 @@ local function main()
     --sceneGame:addChild(createLayerFarm())
     --sceneGame:addChild(createLayerMenu())
     print("pppppppppppppp", my, my.FileUnit, my.FileUnit.new)
-	local ff = my.FileUnit:new("hh.txt")
-    --ff:settestdata()
-    --ff:settestdata()
-    --ff:savedata()
-    print(ff:getbaseurl())
-    print(ff:gettitle())
-    local celllist = ff:getcelllist()
-    for k,v in pairs(celllist) do
-        --print(k, v, v:getrowname(), v:geturl(), v:getcontent())
+    do
+	local ff = my.FileUnit:create("wm.txt")
+--    ff:createdir("put")
+--    ff:createdir("in")
+--    ff:createdir("out")
+--    ff:createdir("poll")
+--    ff:opendir("in")
+--    ff:createfile("123.txt", "1234567890")
+--    ff:opendir("in")
+--    ff:openfile("123.txt")
+--    print("kkkk", ff:getcurfile())
+    local ll = ff:getfilelist()
+--    for k,v in pairs(ll) do
+--        print(v:gettitle())
+--    end
+--    ff:opendir("xiaoshuo")
+--    ff:opendir("chengdong")
+--    local tti
+--    local ll = ff:getfilelist()
+--    for k,v in pairs(ll) do
+--        print(v:gettitle())
+--        tti = v:gettitle()
+--    end
+--    ff:opendir(tti)
+--    ff:openfile("bin")
+--    print(ff:getcurfile())
+--    ff:gotoupdir()
+--    local ll = ff:getfilelist()
+--    local i = 0
+--    for k,v in pairs(ll) do
+--        print(v:gettitle())
+--        i = i + 1
+--        if i > 10 then
+--            break
+--        end
+--    end
+    ff:release()
     end
-    --ff:testchangefile()
-    ff:destroy()
+--    do
+--    local ff = my.pingpong:new()
+--    ff:destroy()
+--    end
 	if cc.Director:getInstance():getRunningScene() then
 		cc.Director:getInstance():replaceScene(sceneGame)
 	else

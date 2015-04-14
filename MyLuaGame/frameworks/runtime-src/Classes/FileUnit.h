@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include <string>
 #include <vector>
+#include <stack>
 #include "fileeditsys.h"
 USING_NS_CC;
 class celldef : public Ref
@@ -26,49 +27,51 @@ public:
 	void settitle(std::string l) {m_title = l;}
 	void setcontent(std::string l) {m_content = l;}
 };
-class FileUnit//index->dir->bookname->bookchapter->bookcontent
+class FileUnit : public Ref//index->dir->bookname->bookchapter->bookcontent
 {
 public:
+	static FileUnit* create(std::string filename);
+private:
 	FileUnit(std::string filename);
+public:
 	~FileUnit();
 public:
-	bool isfileexit();
-	void addrow(std::string row, std::string url, std::string content);
-	bool isrowexist(std::string row);
-	std::string getrowcontent(std::string row);
-	void setrow(std::string row, std::string content);
-	void clear();
-	
-	void savedata();
-
-
-	void settestdata();
-	void testchangefile();
 	/////
-	std::string getbaseurl();
-	std::string gettitle();
-	Vector<celldef*>& getcelllist();
-	void setbaseurl(std::string url);
-	void settitle(std::string title);
-public:
-	void destroy(){delete this;}
+	//Vector<celldef*>& getcelllist();
+	void runcommand(std::string cmd);
+	bool createdir(std::string dirname);
+	bool createfile(std::string filename, std::string filecontent);
+	bool opendir(std::string dirname);
+	bool openfile(std::string filename);
+	std::string getcurfile();
+	void gotoupdir();
+	void gotorootdir();
+	Vector<celldef*>& getfilelist();
 private:
 	std::string m_filename;
 	fileeditsys* m_pfileeditsys;
-	union
-	{
-		struct
-		{
-			char a;
-			char b;
-			char c;
-			char d;
-		};
-		unsigned long len;
-		long length;
-	} unionlen;
+	std::vector<std::string> m_curpath;
+	//union
+	//{
+	//	struct
+	//	{
+	//		char a;
+	//		char b;
+	//		char c;
+	//		char d;
+	//	};
+	//	unsigned long len;
+	//	long length;
+	//} unionlen;
 	Vector<celldef*> m_celllist;
-	void loaddata(std::vector<char> input);
 };
 
+
+class pingpong
+{
+public:
+	pingpong(){};
+	~pingpong(){};
+	void destroy(){delete this;}
+};
 #endif
