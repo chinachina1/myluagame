@@ -236,6 +236,7 @@ local function main()
 		local first = require "src/first"
     -- run
     local sceneGame = cc.Scene:create()
+    g_eventDispatcher = sceneGame:getEventDispatcher()
     sceneGame:addChild(first())
 		print("print first path", cc.FileUtils:getInstance():fullPathForFilename("src/first.lua"), first, first())
     --sceneGame:addChild(createLayerFarm())

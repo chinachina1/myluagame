@@ -44,9 +44,10 @@ public:
 	bool opendir(std::string dirname);
 	bool openfile(std::string filename);
 	std::string getcurfile();
-	void gotoupdir();
+	bool gotoupdir();
 	void gotorootdir();
 	Vector<celldef*>& getfilelist();
+	std::vector<std::string>& getfullpath();
 private:
 	std::string m_filename;
 	fileeditsys* m_pfileeditsys;

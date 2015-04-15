@@ -6,6 +6,7 @@ xiaoshuo = {}
 
 local function loadlocaldata()
     local c = checkbox1:create(cc.Label:createWithTTF("localdata", "res/fonts/Marker Felt.ttf", 30), cc.Label:createWithTTF("localdata", "res/fonts/Marker Felt.ttf", 30), function()
+        addscene(xiaoshuolayer.listlocalbook(), 10)
     end)
     return c
 end

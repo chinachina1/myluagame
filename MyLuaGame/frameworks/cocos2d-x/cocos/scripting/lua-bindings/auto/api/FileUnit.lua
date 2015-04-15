@@ -21,8 +21,14 @@
 -- @return bool#bool ret (return value: bool)
         
 --------------------------------
+-- @function [parent=#FileUnit] getfullpath 
+-- @param self
+-- @return array_table#array_table ret (return value: array_table)
+        
+--------------------------------
 -- @function [parent=#FileUnit] gotoupdir 
 -- @param self
+-- @return bool#bool ret (return value: bool)
         
 --------------------------------
 -- @function [parent=#FileUnit] getfilelist 

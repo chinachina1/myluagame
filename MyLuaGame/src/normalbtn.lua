@@ -2,7 +2,10 @@
 --Author : 张文天
 --Date   : 2014/8/9
 --此文件由[BabeLua]插件自动生成
-
+g_dofortime = g_dofortime or {}
+g_dofortime.gettime = function()
+    return os.time()
+end
 
 normalbtn = class("normalbtn",
     function()

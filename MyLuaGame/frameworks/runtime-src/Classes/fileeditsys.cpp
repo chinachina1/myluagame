@@ -1,15 +1,27 @@
 #include "fileeditsys.h"
+#include "map"
 
+map<string, fileeditsys*> g_filepointlist;
 fileeditsys* fileeditsys::create(string filename)
 {
-	fileeditsys* p = new fileeditsys();
-	p->setFileName(filename);
-	if (! p->openFile())
+	if (g_filepointlist.find(filename) == g_filepointlist.end())
 	{
-		delete p;
-		return NULL;
+		fileeditsys* p = new fileeditsys();
+		p->setFileName(filename);
+		if (! p->openFile())
+		{
+			delete p;
+			return NULL;
+		}
+		g_filepointlist[filename] = p;
+		return p;
 	}
-	return p;
+	else
+	{
+		fileeditsys* p = g_filepointlist[filename];
+		p->retain();
+		return p;
+	}
 }
 
 fileeditsys::fileeditsys()
@@ -21,10 +33,46 @@ fileeditsys::fileeditsys()
 fileeditsys::~fileeditsys()
 {
 	closeFile();
+	stack<treecellpoint*> _tmp;
+	//if (m_proot)
+	//{
+	//	delete m_proot;
+	//}
 	if (m_proot)
 	{
-		delete m_proot;
+		_tmp.push(m_proot);
 	}
+	while (!_tmp.empty())
+	{
+		treecellpoint* p = _tmp.top();
+		if (p->_brother || p->_child)
+		{
+			if (p->_brother)
+			{
+				_tmp.push(p->_brother);
+				p->_brother = NULL;
+			}
+			if (p->_child)
+			{
+				_tmp.push(p->_child);
+				p->_child = NULL;
+			}
+		}
+		else
+		{
+			_tmp.pop();
+			delete p;
+		}
+	}
+}
+
+void fileeditsys::destroy()
+{
+	if (getReferenceCount() == 1)
+	{
+		g_filepointlist.erase(g_filepointlist.find(m_filename));
+	}
+	this->release();
 }
 
 void fileeditsys::setFileName(string filename)
@@ -61,7 +109,7 @@ bool fileeditsys::switchread()
 	return switchwrite();
 	closeFile();
 	m_iotype = 0;
-	m_filehandle = fopen(m_filename.c_str(), "r");
+	m_filehandle = fopen(m_filename.c_str(), "rb");
 	if (!m_filehandle)
 	{
 		m_filehandle = fopen(m_filename.c_str(), "w");
@@ -69,7 +117,7 @@ bool fileeditsys::switchread()
 		{
 			fclose(m_filehandle);
 		}
-		m_filehandle = fopen(m_filename.c_str(), "r");
+		m_filehandle = fopen(m_filename.c_str(), "rb");
 	}
 	return !!m_filehandle;
 }
@@ -78,7 +126,7 @@ bool fileeditsys::switchwrite()
 {
 	closeFile();
 	m_iotype = 1;
-	m_filehandle = fopen(m_filename.c_str(), "r+");
+	m_filehandle = fopen(m_filename.c_str(), "rb+");
 	if (!m_filehandle)
 	{
 		m_filehandle = fopen(m_filename.c_str(), "w");
@@ -86,7 +134,7 @@ bool fileeditsys::switchwrite()
 		{
 			fclose(m_filehandle);
 		}
-		m_filehandle = fopen(m_filename.c_str(), "r+");
+		m_filehandle = fopen(m_filename.c_str(), "rb+");
 	}
 	return !!m_filehandle;
 }
@@ -105,7 +153,9 @@ bool fileeditsys::setfileposend()
 
 bool fileeditsys::readpos(fpos& f)
 {
-	int len = fread(&f, sizeof(f), 1, m_filehandle);
+	fpos tmp = 0;
+	int len = fread(&tmp, sizeof(tmp), 1, m_filehandle);
+	f = tmp;
 	return len == 1;
 }
 
@@ -269,6 +319,59 @@ treecellpoint* fileeditsys::findfiledata(vector<string> cmd)
 		return pp;
 	}
 	return NULL;
+}
+
+bool fileeditsys::findfiledata(vector<string> cmd, treecellpoint& infile)
+{
+	if (cmd.size() == 0)
+		return true;
+	fpos bp = 0;
+	for (int i = 0; i < (int)cmd.size(); i++)
+	{
+		string str = cmd[i];
+		setfilepos(bp);
+		if (readfiletreecelldata(infile._cell))
+		{
+			if (infile._cell.title == str)
+			{
+				//
+				bp = infile._cell.childpos;
+			}
+			else
+			{
+				CC_SAFE_DELETE(infile._brother);
+				CC_SAFE_DELETE(infile._child);
+				readfileallbrotherdata(&infile);
+				treecellpoint* pp = infile._brother;
+				while (pp)
+				{
+					if (pp->_cell.title == str)
+					{
+						break;
+					}
+					else
+					{
+						pp = pp->_brother;
+					}
+				}
+				if (pp && pp->_cell.title == str)
+				{
+					infile._cell = pp->_cell;
+					CC_SAFE_DELETE(infile._brother);
+				}
+				else
+				{
+					CC_SAFE_DELETE(infile._brother);
+					return false;
+				}
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return false;
 }
 
 bool fileeditsys::addfiledata(treecellpoint* parent, string title, string content)

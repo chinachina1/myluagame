@@ -2,8 +2,11 @@
 #define __FILEEDITSYS_HEAD__
 #include <string>
 #include <vector>
+#include "cocos2d.h"
 
 using namespace std;
+USING_NS_CC;
+
 #define fpos unsigned long
 namespace filesys
 {
@@ -36,19 +39,19 @@ namespace filesys
 		}
 		~treecellpoint()
 		{
-			if (_brother)
-			{
-				delete _brother;
-			}
-			if (_child)
-			{
-				delete _child;
-			}
+			//if (_brother)
+			//{
+			//	delete _brother;
+			//}
+			//if (_child)
+			//{
+			//	delete _child;
+			//}
 		}
 	};
 }
 using namespace filesys;
-class fileeditsys
+class fileeditsys : public Ref
 {
 public:
 	static fileeditsys* create(string filename);
@@ -56,6 +59,7 @@ private:
 	fileeditsys();
 public:
 	~fileeditsys();
+	void destroy();
 private:
 	treecellpoint *m_proot;
 private:
@@ -75,13 +79,15 @@ private:
 	bool writestring(string s);
 	//////////////////////////////////////////////////////////////////////////
 	bool readfiletreecelldata(treecell &t);
+	bool readfilebrotherdata(treecellpoint*);
 public:
 	bool filedataisempty();
 	treecellpoint* readgendata();
-	bool readfilebrotherdata(treecellpoint*);
 	bool readfileallbrotherdata(treecellpoint*);
 	bool readfilechilddata(treecellpoint*);
 	treecellpoint* findfiledata(vector<string> cmd);
+	//
+	bool findfiledata(vector<string> cmd, treecellpoint&);
 	//---
 	bool addfiledata(treecellpoint* parent, string title, string content);
 private:

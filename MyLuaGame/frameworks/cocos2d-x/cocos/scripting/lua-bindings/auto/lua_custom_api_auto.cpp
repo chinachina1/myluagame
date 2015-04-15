@@ -469,6 +469,50 @@ int lua_custom_api_FileUnit_openfile(lua_State* tolua_S)
 
     return 0;
 }
+int lua_custom_api_FileUnit_getfullpath(lua_State* tolua_S)
+{
+    int argc = 0;
+    FileUnit* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"FileUnit",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (FileUnit*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_custom_api_FileUnit_getfullpath'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+            return 0;
+        std::vector<std::string>& ret = cobj->getfullpath();
+        ccvector_std_string_to_luaval(tolua_S, ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "getfullpath",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_getfullpath'.",&tolua_err);
+#endif
+
+    return 0;
+}
 int lua_custom_api_FileUnit_gotoupdir(lua_State* tolua_S)
 {
     int argc = 0;
@@ -499,8 +543,9 @@ int lua_custom_api_FileUnit_gotoupdir(lua_State* tolua_S)
     {
         if(!ok)
             return 0;
-        cobj->gotoupdir();
-        return 0;
+        bool ret = cobj->gotoupdir();
+        tolua_pushboolean(tolua_S,(bool)ret);
+        return 1;
     }
     CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "gotoupdir",argc, 0);
     return 0;
@@ -791,6 +836,7 @@ int lua_register_custom_api_FileUnit(lua_State* tolua_S)
         tolua_function(tolua_S,"createdir",lua_custom_api_FileUnit_createdir);
         tolua_function(tolua_S,"gotorootdir",lua_custom_api_FileUnit_gotorootdir);
         tolua_function(tolua_S,"openfile",lua_custom_api_FileUnit_openfile);
+        tolua_function(tolua_S,"getfullpath",lua_custom_api_FileUnit_getfullpath);
         tolua_function(tolua_S,"gotoupdir",lua_custom_api_FileUnit_gotoupdir);
         tolua_function(tolua_S,"getfilelist",lua_custom_api_FileUnit_getfilelist);
         tolua_function(tolua_S,"createfile",lua_custom_api_FileUnit_createfile);
