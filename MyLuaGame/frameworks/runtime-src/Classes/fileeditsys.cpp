@@ -28,6 +28,8 @@ fileeditsys::fileeditsys()
 {
 	m_filehandle = NULL;
 	m_proot = NULL;
+	vector<string> _t;
+	m_fastindex[_t] = 0;
 }
 
 fileeditsys::~fileeditsys()
@@ -190,7 +192,7 @@ bool fileeditsys::writestring(string s)
 
 bool fileeditsys::readfiletreecelldata(treecell &t)
 {
-	if (readpos(t.beginpos) && readpos(t.brotherpos) && readpos(t.childpos) && readstring(t.title) && readstring(t.content))
+	if (readpos(t.beginpos) && readpos(t.brotherpos) && readpos(t.childpos) && readstring(t.title) && readstring(t.content) && readstring(t.flag))
 	{
 		return true;
 	}
@@ -324,13 +326,19 @@ treecellpoint* fileeditsys::findfiledata(vector<string> cmd)
 bool fileeditsys::findfiledata(vector<string> cmd, treecellpoint& infile)
 {
 	if (cmd.size() == 0)
+	{
+		treecell cc;
+		if (setfilepos(0) && readfiletreecelldata(cc))
+		{
+			infile._cell = cc;
+		}
 		return true;
+	}
 	fpos bp = 0;
 	for (int i = 0; i < (int)cmd.size(); i++)
 	{
 		string str = cmd[i];
-		setfilepos(bp);
-		if (readfiletreecelldata(infile._cell))
+		if (setfilepos(bp)&& readfiletreecelldata(infile._cell))
 		{
 			if (infile._cell.title == str)
 			{
@@ -339,29 +347,31 @@ bool fileeditsys::findfiledata(vector<string> cmd, treecellpoint& infile)
 			}
 			else
 			{
-				CC_SAFE_DELETE(infile._brother);
-				CC_SAFE_DELETE(infile._child);
-				readfileallbrotherdata(&infile);
-				treecellpoint* pp = infile._brother;
-				while (pp)
+				fpos nextpos = infile._cell.brotherpos;
+				while (nextpos)
 				{
-					if (pp->_cell.title == str)
+					if (setfilepos(nextpos) && readfiletreecelldata(infile._cell))
 					{
-						break;
+						if (infile._cell.title == str)
+						{
+							break;
+						}
+						else
+						{
+							nextpos = infile._cell.brotherpos;
+						}
 					}
 					else
 					{
-						pp = pp->_brother;
+						return false;
 					}
 				}
-				if (pp && pp->_cell.title == str)
+				if (infile._cell.title == str)
 				{
-					infile._cell = pp->_cell;
-					CC_SAFE_DELETE(infile._brother);
+					bp = infile._cell.childpos;
 				}
 				else
 				{
-					CC_SAFE_DELETE(infile._brother);
 					return false;
 				}
 			}
@@ -371,7 +381,133 @@ bool fileeditsys::findfiledata(vector<string> cmd, treecellpoint& infile)
 			return false;
 		}
 	}
-	return false;
+	return true;
+}
+
+vector<treecell> fileeditsys::getallbrother(vector<string> cmd)
+{
+	vector<treecell> ll;
+	treecellpoint pc;
+	if (findfiledata(cmd, pc))
+	{
+		ll.push_back(pc._cell);
+		fpos tmppos = pc._cell.brotherpos;
+		while (tmppos)
+		{
+			treecell cc;
+			if (setfilepos(tmppos) && readfiletreecelldata(cc))
+			{
+				ll.push_back(cc);
+				tmppos = cc.brotherpos;
+			}
+			else
+			{
+				//ll.clear();
+				break;
+			}
+		}
+	}
+	return ll;
+}
+
+bool fileeditsys::getfirstchild(vector<string> cmd, treecell&child)
+{
+	if (cmd.size() != 0)
+	{
+		treecellpoint pc;
+		if (findfiledata(cmd, pc))
+		{
+			if (pc._cell.childpos > 0)
+			{
+				if (setfilepos(pc._cell.childpos) && readfiletreecelldata(child))
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		child = readgendata()->_cell;
+		return true;
+	}
+	return true;
+}
+
+bool fileeditsys::addfiledata(vector<string> cmd, string title, string content, string flag)
+{
+	treecellpoint parent;
+	if (findfiledata(cmd, parent))
+	{
+		treecellpoint me;
+		setfileposend();
+		fpos bb = ftell(m_filehandle);
+		me._cell.beginpos = bb;
+		me._cell.brotherpos = 0;
+		me._cell.childpos = 0;
+		me._cell.title = title;
+		me._cell.content = content;
+		me._cell.flag = flag;
+		bool res = addfiledata(me._cell);
+		if (!res)
+		{
+			return false;
+		}
+		treecell firstbrother;
+		if (getfirstchild(cmd, firstbrother))
+		{
+			treecell tmpbrother = firstbrother;
+			fpos fp = tmpbrother.brotherpos;
+			while (fp)
+			{
+				if (setfilepos(fp) && readfiletreecelldata(tmpbrother))
+				{
+					fp = tmpbrother.brotherpos;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			tmpbrother.brotherpos = me._cell.beginpos;
+			editfiledata(tmpbrother);
+		}
+		else
+		{
+			parent._cell.childpos = me._cell.beginpos;
+			editfiledata(parent._cell);
+		}
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+vector<treecell> fileeditsys::getallchild(vector<string> cmd)
+{
+	vector<treecell> ll;
+	treecell firstchild;
+	if (getfirstchild(cmd, firstchild))
+	{
+		vector<string> tmpcmd(cmd.begin(), cmd.end());
+		tmpcmd.push_back(firstchild.title);
+		ll = getallbrother(tmpcmd);
+	}
+	return ll;
 }
 
 bool fileeditsys::addfiledata(treecellpoint* parent, string title, string content)
@@ -436,7 +572,7 @@ bool fileeditsys::addfiledata(treecellpoint* parent, string title, string conten
 bool fileeditsys::addfiledata(treecell& tt)
 {
 	setfilepos(tt.beginpos);
-	if (writepos(tt.beginpos) && writepos(tt.brotherpos) && writepos(tt.childpos) && writestring(tt.title) && writestring(tt.content))
+	if (writepos(tt.beginpos) && writepos(tt.brotherpos) && writepos(tt.childpos) && writestring(tt.title) && writestring(tt.content) && writestring(tt.flag))
 	{
 		saveFile();
 		return true;

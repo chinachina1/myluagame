@@ -1,4 +1,5 @@
 require "src/tableviewctrl"
+require "src/tableviewctrl1"
 require "src/downmanger"
 require "src/xiaoshuoparser"
 local xiaoshuo = {}
@@ -76,10 +77,10 @@ local function inputurlpathdlg()
         downmgr.addexpresstask("xiaoshuomulu", str, function(xhr, title, downokevent)
             response = xhr.response
             local ff = my.FileUnit:create("wm.txt")
-            ff:createdir("xiaoshuo")
-            ff:opendir("xiaoshuo")
-            ff:createdir("chengdong")
-            ff:opendir("chengdong")
+--            ff:createdir("xiaoshuo")
+--            ff:opendir("xiaoshuo")
+--            ff:createdir("chengdong")
+--            ff:opendir("chengdong")
             local xiaoshuomingzi, xiaoshuozhangjie = xiaoshuoparser.parserxiaoshuo(str, response, true)
             ff:createdir(xiaoshuomingzi)
             ff:opendir(xiaoshuomingzi)
@@ -113,20 +114,56 @@ local function listlocalbook()
 	local layerbase = cc.LayerColor:create(cc.c4b(62,71,193,255),game_width,game_height)
 	layerbase:setAnchorPoint(cc.p(0, 0))
 	layerbase:setPosition(cc.p(0, 0))
-
+    local createbooklistui
+    local createtxtread
     local ff = my.FileUnit:create("wm.txt")
-    local function createbooklistui()
+    createtxtread = function ()
+        local layer = cc.LayerColor:create(cc.c4b(62,71,193,255),game_width,game_height)
+        layer:setAnchorPoint(cc.p(0, 0))
+        layer:setPosition(cc.p(0, 0))
+        
+        local str = ff:getcurfile()
+        local lab = cc.Label:createWithTTF(str, "src/yu.ttf", 20, cc.size(game_width - 100, 0))
+        lab:setAnchorPoint(cc.p(0, 1))
+        lab:setPosition(cc.p(0, game_height))
+        layer:addChild(lab)
+
+        local function backfun()
+            if ff:gotoupdir() then
+                local nn = createbooklistui()
+                layerbase:addChild(nn, 1)
+                layer:removeFromParent()
+            else
+                ff:release()
+                layerbase:removeFromParent();
+            end
+        end
+        local backbtn = createlabelbtn("back", 50, 50, backfun)
+        fullscreenposition.set(backbtn, game_width - 50, 0)
+        layer:addChild(backbtn, 10)
+        return layer
+    end
+    createbooklistui = function ()
         local layer = cc.LayerColor:create(cc.c4b(62,71,193,255),game_width,game_height)
         layer:setAnchorPoint(cc.p(0, 0))
         layer:setPosition(cc.p(0, 0))
 
         
-        local tableview  = TableViewCtrl:create()
+        local filelist = ff:getfilelist()
+        local cnt = table.getn(filelist)
+        if cnt > 0 then
+            cnt = cnt - 0
+        end
+        local tableview  = TableViewCtrl1:create(cnt)
         tableview:setContentSize(cc.size(game_width, game_height))
         fullscreenposition.set(tableview, 50, 0)
         layer:addChild(tableview)
-        local filelist = ff:getfilelist()
-        for k,v in ipairs(filelist) do
+        tableview.getcellsizefun = function(_, idx)
+            return 80, 200
+        end
+        tableview.updatecellfun = function(_, cell, idx)
+            cell:removeAllChildren()
+            local v = filelist[idx + 1]
             local t = v:gettitle()
             local c = v:getcontent()
             --print("oooooooooooooo", t, c)
@@ -143,14 +180,42 @@ local function listlocalbook()
                         layer:removeFromParent()
                     else
                         if ff:openfile(t) then
+                            local nn = createtxtread()
+                            layerbase:addChild(nn, 2)
+                            layer:removeFromParent()
                         end
                     end
                 end)
                 hh:setAnchorPoint(cc.p(0, 0))
-                tableview:addCell(hh)
+                cell:addChild(hh)
             end
         end
         tableview:reloadData()
+--        for k,v in ipairs(filelist) do
+--            local t = v:gettitle()
+--            local c = v:getcontent()
+--            --print("oooooooooooooo", t, c)
+--            if true then--t ~= "bin" then
+--                local tt = {}
+--                tt.name = t
+--                tt.folder = (c == "folder")
+--                tt.progress = {title = "what", pro = 1}
+--                local hh = createbooknamectrl(tt, function()
+--                    if c == "folder" then
+--                        ff:opendir(t)
+--                        local nn = createbooklistui()
+--                        layerbase:addChild(nn, 1)
+--                        layer:removeFromParent()
+--                    else
+--                        if ff:openfile(t) then
+--                        end
+--                    end
+--                end)
+--                hh:setAnchorPoint(cc.p(0, 0))
+--                tableview:addCell(hh)
+--            end
+--        end
+--        tableview:reloadData()
 
         local function backfun()
             if ff:gotoupdir() then

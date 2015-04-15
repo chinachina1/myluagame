@@ -40,7 +40,7 @@ public:
 	//Vector<celldef*>& getcelllist();
 	void runcommand(std::string cmd);
 	bool createdir(std::string dirname);
-	bool createfile(std::string filename, std::string filecontent);
+	bool createfile(std::string filename, std::string filecontent, string flag);
 	bool opendir(std::string dirname);
 	bool openfile(std::string filename);
 	std::string getcurfile();
@@ -48,6 +48,20 @@ public:
 	void gotorootdir();
 	Vector<celldef*>& getfilelist();
 	std::vector<std::string>& getfullpath();
+private:
+	bool createfile1(std::string filename, std::string filecontent, string flag);
+	bool openpath(std::string filename);
+public:
+	Vector<celldef*>& getbooklist();
+	bool createnewbook(std::string name, std::string url);//url == key
+	bool openbook(std::string name, std::string url);
+	Vector<celldef*>& getbooktitlelist(std::string name, std::string url);
+	bool addbooktitle(std::string name, std::string url);//url == key
+	bool openbooktitle(std::string name, std::string url);
+	bool addbooktitlecontent(std::string title, std::string content, std::string url);
+	bool openbooktitlecontent(std::string name, std::string url);
+	std::string getbooktitlecontent();
+	bool onpageback();
 private:
 	std::string m_filename;
 	fileeditsys* m_pfileeditsys;

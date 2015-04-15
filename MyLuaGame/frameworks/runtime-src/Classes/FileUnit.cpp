@@ -35,35 +35,15 @@ void FileUnit::runcommand(std::string cmd)
 
 bool FileUnit::createdir(std::string dirname)
 {
-	if (m_pfileeditsys)
-	{
-		treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
-		if (p && p->_cell.content == "folder")
-		{
-			vector<string> _v(m_curpath.begin(), m_curpath.end());
-			_v.push_back(dirname);
-			treecellpoint* pp = m_pfileeditsys->findfiledata(_v);
-			if (pp)
-			{
-				return false;
-			}
-			m_pfileeditsys->addfiledata(p, dirname, "folder");
-			return true;
-		}
-	}
-	return false;
-
 	//if (m_pfileeditsys)
 	//{
-	//	treecellpoint p;
-	//	bool res = m_pfileeditsys->findfiledata(m_curpath, p);
-	//	if (res && p._cell.content == "folder")
+	//	treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
+	//	if (p && p->_cell.content == "folder")
 	//	{
 	//		vector<string> _v(m_curpath.begin(), m_curpath.end());
 	//		_v.push_back(dirname);
-	//		treecellpoint pp;
-	//		bool res1 = m_pfileeditsys->findfiledata(_v, pp);
-	//		if (res1)
+	//		treecellpoint* pp = m_pfileeditsys->findfiledata(_v);
+	//		if (pp)
 	//		{
 	//			return false;
 	//		}
@@ -72,23 +52,121 @@ bool FileUnit::createdir(std::string dirname)
 	//	}
 	//}
 	//return false;
-}
 
-bool FileUnit::createfile(std::string filename, std::string filecontent)
-{
 	if (m_pfileeditsys)
 	{
-		treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
-		if (p && p->_cell.content == "folder")
+		treecellpoint p;
+		bool res = m_pfileeditsys->findfiledata(m_curpath, p);
+		if (res && p._cell.content == "folder")
 		{
 			vector<string> _v(m_curpath.begin(), m_curpath.end());
-			_v.push_back(filename);
-			treecellpoint* pp = m_pfileeditsys->findfiledata(_v);
-			if (pp)
+			_v.push_back(dirname);
+			treecellpoint pp;
+			bool res1 = m_pfileeditsys->findfiledata(_v, pp);
+			if (res1)
 			{
 				return false;
 			}
-			m_pfileeditsys->addfiledata(p, filename, filecontent);
+			m_pfileeditsys->addfiledata(m_curpath, dirname, "folder", "");
+			return true;
+		}
+	}
+	return false;
+}
+
+bool FileUnit::createfile(std::string filename, std::string filecontent, std::string flag)
+{
+	//if (m_pfileeditsys)
+	//{
+	//	treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
+	//	if (p && p->_cell.content == "folder")
+	//	{
+	//		vector<string> _v(m_curpath.begin(), m_curpath.end());
+	//		_v.push_back(filename);
+	//		treecellpoint* pp = m_pfileeditsys->findfiledata(_v);
+	//		if (pp)
+	//		{
+	//			return false;
+	//		}
+	//		m_pfileeditsys->addfiledata(p, filename, filecontent);
+	//		return true;
+	//	}
+	//}
+	//return false;
+
+	if (m_pfileeditsys)
+	{
+		treecellpoint p;
+		bool res = m_pfileeditsys->findfiledata(m_curpath, p);
+		if (res && p._cell.content == "folder")
+		{
+			vector<string> _v(m_curpath.begin(), m_curpath.end());
+			_v.push_back(filename);
+			treecellpoint pp;
+			bool res1 = m_pfileeditsys->findfiledata(_v, pp);
+			if (res1)
+			{
+				return false;
+			}
+			m_pfileeditsys->addfiledata(m_curpath, filename, filecontent, flag);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool FileUnit::createfile1(std::string filename, std::string filecontent, std::string flag)
+{
+	//if (m_pfileeditsys)
+	//{
+	//	treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
+	//	if (p && p->_cell.content == "folder")
+	//	{
+	//		vector<string> _v(m_curpath.begin(), m_curpath.end());
+	//		_v.push_back(filename);
+	//		treecellpoint* pp = m_pfileeditsys->findfiledata(_v);
+	//		if (pp)
+	//		{
+	//			return false;
+	//		}
+	//		m_pfileeditsys->addfiledata(p, filename, filecontent);
+	//		return true;
+	//	}
+	//}
+	//return false;
+
+	if (m_pfileeditsys)
+	{
+		treecellpoint p;
+		bool res = m_pfileeditsys->findfiledata(m_curpath, p);
+		if (res)
+		{
+			vector<string> _v(m_curpath.begin(), m_curpath.end());
+			_v.push_back(filename);
+			treecellpoint pp;
+			bool res1 = m_pfileeditsys->findfiledata(_v, pp);
+			if (res1)
+			{
+				return false;
+			}
+			m_pfileeditsys->addfiledata(m_curpath, filename, filecontent, flag);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool FileUnit::openpath(std::string dirname)
+{
+	if (m_pfileeditsys)
+	{
+		vector<string> _v(m_curpath.begin(), m_curpath.end());
+		_v.push_back(dirname);
+		treecellpoint p;
+		bool res = m_pfileeditsys->findfiledata(_v, p);
+		if (res)
+		{
+			m_curpath.push_back(dirname);
 			return true;
 		}
 	}
@@ -97,12 +175,26 @@ bool FileUnit::createfile(std::string filename, std::string filecontent)
 
 bool FileUnit::opendir(std::string dirname)
 {
+	//if (m_pfileeditsys)
+	//{
+	//	vector<string> _v(m_curpath.begin(), m_curpath.end());
+	//	_v.push_back(dirname);
+	//	treecellpoint* p = m_pfileeditsys->findfiledata(_v);
+	//	if (p && p->_cell.content == "folder")
+	//	{
+	//		m_curpath.push_back(dirname);
+	//		return true;
+	//	}
+	//}
+	//return false;
+
 	if (m_pfileeditsys)
 	{
 		vector<string> _v(m_curpath.begin(), m_curpath.end());
 		_v.push_back(dirname);
-		treecellpoint* p = m_pfileeditsys->findfiledata(_v);
-		if (p && p->_cell.content == "folder")
+		treecellpoint p;
+		bool res = m_pfileeditsys->findfiledata(_v, p);
+		if (res && p._cell.content == "folder")
 		{
 			m_curpath.push_back(dirname);
 			return true;
@@ -113,12 +205,26 @@ bool FileUnit::opendir(std::string dirname)
 
 bool FileUnit::openfile(std::string filename)
 {
+	//if (m_pfileeditsys)
+	//{
+	//	vector<string> _v(m_curpath);
+	//	_v.push_back(filename);
+	//	treecellpoint* p = m_pfileeditsys->findfiledata(_v);
+	//	if (p && p->_cell.content != "folder")
+	//	{
+	//		m_curpath.push_back(filename);
+	//		return true;
+	//	}
+	//}
+	//return false;
+
 	if (m_pfileeditsys)
 	{
-		vector<string> _v(m_curpath);
+		vector<string> _v(m_curpath.begin(), m_curpath.end());
 		_v.push_back(filename);
-		treecellpoint* p = m_pfileeditsys->findfiledata(_v);
-		if (p && p->_cell.content != "folder")
+		treecellpoint p;
+		bool res = m_pfileeditsys->findfiledata(_v, p);
+		if (res && p._cell.content != "folder")
 		{
 			m_curpath.push_back(filename);
 			return true;
@@ -129,12 +235,23 @@ bool FileUnit::openfile(std::string filename)
 
 std::string FileUnit::getcurfile()
 {
+	//if (m_pfileeditsys)
+	//{
+	//	treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
+	//	if (p && p->_cell.content != "folder")
+	//	{
+	//		return p->_cell.content;
+	//	}
+	//}
+	//return "";
+
 	if (m_pfileeditsys)
 	{
-		treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
-		if (p && p->_cell.content != "folder")
+		treecellpoint p;
+		bool res = m_pfileeditsys->findfiledata(m_curpath, p);
+		if (res && p._cell.content != "folder")
 		{
-			return p->_cell.content;
+			return p._cell.content;
 		}
 	}
 	return "";
@@ -161,26 +278,42 @@ void FileUnit::gotorootdir()
 
 Vector<celldef*>& FileUnit::getfilelist()
 {
+	//m_celllist.clear();
+	//if (m_pfileeditsys)
+	//{
+	//	treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
+	//	if (p && m_pfileeditsys->readfilechilddata(p))
+	//	{
+	//		p = p->_child;
+	//		if (p && m_pfileeditsys->readfileallbrotherdata(p))
+	//		{
+	//			treecellpoint* pp = p;
+	//			while (pp)
+	//			{
+	//				celldef* a = celldef::create();
+	//				a->m_title = pp->_cell.title;
+	//				if (pp->_cell.content == "folder")
+	//					a->m_content = pp->_cell.content;
+	//				m_celllist.pushBack(a);
+	//				pp = pp->_brother;
+	//			}
+	//		}
+	//	}
+	//}
+	//return m_celllist;
+
 	m_celllist.clear();
 	if (m_pfileeditsys)
 	{
-		treecellpoint* p = m_pfileeditsys->findfiledata(m_curpath);
-		if (p && m_pfileeditsys->readfilechilddata(p))
+		vector<treecell> vec = m_pfileeditsys->getallchild(m_curpath);
+		for (auto &c : vec)
 		{
-			p = p->_child;
-			if (p && m_pfileeditsys->readfileallbrotherdata(p))
-			{
-				treecellpoint* pp = p;
-				while (pp)
-				{
-					celldef* a = celldef::create();
-					a->m_title = pp->_cell.title;
-					if (pp->_cell.content == "folder")
-						a->m_content = pp->_cell.content;
-					m_celllist.pushBack(a);
-					pp = pp->_brother;
-				}
-			}
+			celldef* a = celldef::create();
+			a->m_title = c.title;
+			//if (c.content == "folder")
+			a->m_path = c.flag;
+			a->m_content = c.content;
+			m_celllist.pushBack(a);
 		}
 	}
 	return m_celllist;
@@ -189,4 +322,81 @@ Vector<celldef*>& FileUnit::getfilelist()
 std::vector<std::string>& FileUnit::getfullpath()
 {
 	return m_curpath;
+}
+
+Vector<celldef*>& FileUnit::getbooklist()
+{
+	gotorootdir();
+	return getfilelist();
+}
+
+bool FileUnit::createnewbook(std::string name, std::string url)
+{
+	gotorootdir();
+	return createfile1(url, "bookname", name);
+}
+
+bool FileUnit::openbook(std::string name, std::string url)
+{
+	gotorootdir();
+	return openpath(url);
+}
+
+Vector<celldef*>& FileUnit::getbooktitlelist(std::string name, std::string url)
+{
+	if ((m_curpath.size() != 2) || (m_curpath[1] != url))
+	{
+		m_celllist.clear();
+		return m_celllist;
+	}
+	return getfilelist();
+}
+
+bool FileUnit::addbooktitle(std::string name, std::string url)
+{
+	if (m_curpath.size() < 2)
+	{
+		return false;
+	}
+	vector<string> tmpvec(m_curpath.begin(), m_curpath.end());
+	m_curpath.clear();
+	m_curpath.push_back(tmpvec[0]);
+	m_curpath.push_back(tmpvec[1]);
+	bool res = createfile1(url, "booktitle", name);
+	m_curpath = tmpvec;
+	return res;
+}
+
+bool FileUnit::openbooktitle(std::string name, std::string url)
+{
+	if (m_curpath.size() < 2)
+	{
+		return false;
+	}
+	vector<string> tmpvec(m_curpath.begin(), m_curpath.end());
+	m_curpath.clear();
+	m_curpath.push_back(tmpvec[0]);
+	m_curpath.push_back(tmpvec[1]);
+	return openpath(url);
+}
+
+bool FileUnit::addbooktitlecontent(std::string title, std::string content, std::string url)
+{
+	return openbooktitle(title, url) && createfile1("txt", content, title);
+}
+
+bool FileUnit::openbooktitlecontent(std::string name, std::string url)
+{
+	return openbooktitle(name, url) && openfile("txt");
+}
+
+std::string FileUnit::getbooktitlecontent()
+{
+	return getcurfile();
+}
+
+bool FileUnit::onpageback()
+{
+	gotorootdir();
+	return true;
 }

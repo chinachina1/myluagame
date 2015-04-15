@@ -17,6 +17,7 @@ namespace filesys
 		fpos childpos;
 		string title;
 		string content;
+		string flag;
 		treecell()
 		{
 			brotherpos = 0;
@@ -25,7 +26,7 @@ namespace filesys
 		}
 		fpos getsize()
 		{
-			return sizeof(beginpos) + sizeof(brotherpos) + sizeof(childpos) + title.size() + content.size() + 2;
+			return sizeof(beginpos) + sizeof(brotherpos) + sizeof(childpos) + title.size() + content.size() + flag.size() + 3;
 		}
 	};
 	struct treecellpoint 
@@ -86,16 +87,23 @@ public:
 	bool readfileallbrotherdata(treecellpoint*);
 	bool readfilechilddata(treecellpoint*);
 	treecellpoint* findfiledata(vector<string> cmd);
-	//
-	bool findfiledata(vector<string> cmd, treecellpoint&);
 	//---
 	bool addfiledata(treecellpoint* parent, string title, string content);
+	////newapi
+	//
+	bool findfiledata(vector<string> cmd, treecellpoint&);
+	vector<treecell> getallbrother(vector<string> cmd);
+	bool getfirstchild(vector<string> cmd, treecell&child);
+	bool addfiledata(vector<string> cmd, string title, string content, string flag);
+	vector<treecell> getallchild(vector<string> cmd);
 private:
 	int m_iotype;//0 "r"; 1 "r+"; 
 
 	vector<char> m_readtempbuff;
 	bool addfiledata(treecell&);
 	bool editfiledata(treecell&);
+	//newapi
+	map<vector<string>, fpos> m_fastindex;
 public:
 
 };
