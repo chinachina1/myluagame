@@ -36,11 +36,19 @@ local function dofirstwork()
     xhr.responseType = cc.XMLHTTPREQUEST_RESPONSE_STRING
     xhr:open("GET", curdowninfocell.url)
     local function downok() 
-        local response = xhr.response
-        curdowninfocell.dataoperatefun(xhr, curdowninfocell.title, curdowninfocell.downeventname)
-        senddownevent()
-        curdowninfocell = nil
-        dofirstwork()
+        local res = xhr.succeed
+        if res == 0 then
+            local response = xhr.response
+            curdowninfocell.dataoperatefun(xhr, curdowninfocell.title, curdowninfocell.downeventname)
+            senddownevent()
+            curdowninfocell = nil
+            dofirstwork()
+        else
+            local tttt = curdowninfocell
+            curdowninfocell = nil
+            table.insert(needdownqueue, tttt)
+            dofirstwork()
+        end
     end
     xhr:registerScriptHandler(downok)
     xhr:send()
