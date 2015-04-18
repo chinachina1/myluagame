@@ -9,6 +9,7 @@ FileUnit* FileUnit::create(std::string filename)
 FileUnit::FileUnit(std::string filename)
 {
 	m_filename = "D:/" + filename; 
+	m_pfileeditsys = NULL;
 	m_pfileeditsys = fileeditsys::create(m_filename);
 	if (m_pfileeditsys)
 	{
@@ -18,6 +19,21 @@ FileUnit::FileUnit(std::string filename)
 		}
 	}
 	m_curpath.push_back("index");
+	m_psqlite3 = NULL;
+	//int res = sqlite3_open(m_filename.c_str(), &m_psqlite3);
+	//if (res != SQLITE_OK)
+	//{
+	//	m_psqlite3 = NULL;
+	//}
+	//else
+	//{
+	//	char* tmp = NULL;
+	//	res = sqlite3_exec(m_psqlite3, "create table bookroot(bookurl varchar(100), bookname varchar(50))", 0, 0, &tmp);
+	//	if (res != SQLITE_OK)
+	//	{
+	//		sqlite3_free(tmp);
+	//	}
+	//}
 }
 
 FileUnit::~FileUnit()
@@ -25,6 +41,10 @@ FileUnit::~FileUnit()
 	if (m_pfileeditsys)
 	{
 		m_pfileeditsys->destroy();
+	}
+	if (m_psqlite3)
+	{
+		sqlite3_close(m_psqlite3);
 	}
 }
 
@@ -309,9 +329,9 @@ Vector<celldef*>& FileUnit::getfilelist()
 		for (auto &c : vec)
 		{
 			celldef* a = celldef::create();
-			a->m_title = c.title;
+			a->m_title = c.flag;
 			//if (c.content == "folder")
-			a->m_path = c.flag;
+			a->m_path = c.title;
 			a->m_content = c.content;
 			m_celllist.pushBack(a);
 		}
@@ -342,9 +362,9 @@ bool FileUnit::openbook(std::string name, std::string url)
 	return openpath(url);
 }
 
-Vector<celldef*>& FileUnit::getbooktitlelist(std::string name, std::string url)
+Vector<celldef*>& FileUnit::getbooktitlelist()
 {
-	if ((m_curpath.size() != 2) || (m_curpath[1] != url))
+	if ((m_curpath.size() != 2))
 	{
 		m_celllist.clear();
 		return m_celllist;
@@ -400,3 +420,75 @@ bool FileUnit::onpageback()
 	gotorootdir();
 	return true;
 }
+
+std::string FileUnit::getmybookname()
+{
+	vector<string> tmpvec(m_curpath.begin(), m_curpath.end());
+	m_curpath.clear();
+	m_curpath.push_back(tmpvec[0]);
+	m_curpath.push_back(tmpvec[1]);
+	if (m_pfileeditsys)
+	{
+		treecellpoint p;
+		bool res = m_pfileeditsys->findfiledata(m_curpath, p);
+		if (res)
+		{
+			m_curpath = tmpvec;
+			return p._cell.title;
+		}
+	}
+	m_curpath = tmpvec;
+	return "";
+}
+
+/*
+Vector<celldef*>& FileUnit::getbooklist()
+{
+	return m_celllist;
+}
+
+bool FileUnit::createnewbook(std::string name, std::string url)
+{
+	return true;
+}
+
+bool FileUnit::openbook(std::string name, std::string url)
+{
+	return true;
+}
+
+Vector<celldef*>& FileUnit::getbooktitlelist(std::string name, std::string url)
+{
+	return m_celllist;
+}
+
+bool FileUnit::addbooktitle(std::string name, std::string url)
+{
+	return true;
+}
+
+bool FileUnit::openbooktitle(std::string name, std::string url)
+{
+	return true;
+}
+
+bool FileUnit::addbooktitlecontent(std::string title, std::string content, std::string url)
+{
+	return true;
+}
+
+bool FileUnit::openbooktitlecontent(std::string name, std::string url)
+{
+	return true;
+}
+
+std::string FileUnit::getbooktitlecontent()
+{
+	return "";
+}
+
+bool FileUnit::onpageback()
+{
+	return true;
+}
+*/

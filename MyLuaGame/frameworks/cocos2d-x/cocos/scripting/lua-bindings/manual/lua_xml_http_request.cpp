@@ -190,11 +190,20 @@ void LuaMinXmlHttpRequest::_sendRequest()
         long statusCode = response->getResponseCode();
         char statusString[64] = {};
         sprintf(statusString, "HTTP Status Code: %ld, tag = %s", statusCode, response->getHttpRequest()->getTag());
-        
+        _succeed = (int)response->isSucceed();
         if (!response->isSucceed())
         {
             CCLOG("response failed");
-            CCLOG("error buffer: %s", response->getErrorBuffer());
+			CCLOG("error buffer: %s", response->getErrorBuffer());
+			int handler = cocos2d::ScriptHandlerMgr::getInstance()->getObjectHandler((void*)this, cocos2d::ScriptHandlerMgr::HandlerType::XMLHTTPREQUEST_READY_STATE_CHANGE );
+
+			if (0 != handler)
+			{
+				cocos2d::CommonScriptData data(handler,"");
+				cocos2d::ScriptEvent event(cocos2d::ScriptEventType::kCommonEvent,(void*)&data);
+				cocos2d::ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&event);
+			}
+			release();
             return;
         }
         
@@ -533,6 +542,35 @@ static int lua_get_XMLHttpRequest_readyState(lua_State* L)
 tolua_lerror:
     tolua_error(L,"#ferror in function 'lua_get_XMLHttpRequest_readyState'.",&tolua_err);
     return 0;
+#endif
+}
+
+static int lua_get_XMLHttpRequest_succeed(lua_State* L)
+{
+	LuaMinXmlHttpRequest* self = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+	if (!tolua_isusertype(L,1,"cc.XMLHttpRequest",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+	self = (LuaMinXmlHttpRequest*)  tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+	if (nullptr == self)
+	{
+		tolua_error(L,"invalid 'self' in function 'lua_get_XMLHttpRequest_succeed'\n", nullptr);
+		return 0;
+	}
+#endif
+
+	lua_pushinteger(L, (lua_Integer)self->getsucceed());
+
+	return 1;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+	tolua_error(L,"#ferror in function 'lua_get_XMLHttpRequest_succeed'.",&tolua_err);
+	return 0;
 #endif
 }
 
@@ -1077,6 +1115,7 @@ TOLUA_API int register_xml_http_request(lua_State* L)
         tolua_variable(L, "timeout", lua_get_XMLHttpRequest_timeout, lua_set_XMLHttpRequest_timeout);
         tolua_variable(L, "readyState", lua_get_XMLHttpRequest_readyState, nullptr);
         tolua_variable(L, "status",lua_get_XMLHttpRequest_status,nullptr);
+		tolua_variable(L, "succeed",lua_get_XMLHttpRequest_succeed,nullptr);
         tolua_variable(L, "statusText", lua_get_XMLHttpRequest_statusText, nullptr);
         tolua_variable(L, "responseText", lua_get_XMLHttpRequest_responseText, nullptr);
         tolua_variable(L, "response", lua_get_XMLHttpRequest_response, nullptr);

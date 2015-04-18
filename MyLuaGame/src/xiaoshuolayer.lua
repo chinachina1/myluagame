@@ -74,22 +74,14 @@ local function inputurlpathdlg()
         local str = editboxusername:getText()
         print("url:", str)
         downokevent = str .. tostring(os.time)
-        downmgr.addexpresstask("xiaoshuomulu", str, function(xhr, title, downokevent)
+        downmgr.addexpresstask(str, str, function(xhr, title, downokevent)
             response = xhr.response
             local ff = my.FileUnit:create("wm.txt")
---            ff:createdir("xiaoshuo")
---            ff:opendir("xiaoshuo")
---            ff:createdir("chengdong")
---            ff:opendir("chengdong")
             local xiaoshuomingzi, xiaoshuozhangjie = xiaoshuoparser.parserxiaoshuo(str, response, true)
-            ff:createdir(xiaoshuomingzi)
-            ff:opendir(xiaoshuomingzi)
-            ff:createfile("bin", str)
+            ff:createnewbook(xiaoshuomingzi, str)
+            ff:openbook(xiaoshuomingzi, str)
             for k,v in ipairs(xiaoshuozhangjie) do
-                ff:createdir(v[1])
-                ff:opendir(v[1])
-                ff:createfile("bin", str .. v[2])
-                ff:gotoupdir()
+                ff:addbooktitle(v[1], str .. v[2])
             end
             ff:release()
         end, downokevent)
@@ -115,6 +107,7 @@ local function listlocalbook()
 	layerbase:setAnchorPoint(cc.p(0, 0))
 	layerbase:setPosition(cc.p(0, 0))
     local createbooklistui
+    local createbooktitlelistui
     local createtxtread
     local ff = my.FileUnit:create("wm.txt")
     createtxtread = function ()
@@ -122,34 +115,49 @@ local function listlocalbook()
         layer:setAnchorPoint(cc.p(0, 0))
         layer:setPosition(cc.p(0, 0))
         
-        local str = ff:getcurfile()
+        local str = ff:getbooktitlecontent()
         local lab = cc.Label:createWithTTF(str, "src/yu.ttf", 20, cc.size(game_width - 100, 0))
         lab:setAnchorPoint(cc.p(0, 1))
         lab:setPosition(cc.p(0, game_height))
         layer:addChild(lab)
 
         local function backfun()
-            if ff:gotoupdir() then
-                local nn = createbooklistui()
-                layerbase:addChild(nn, 1)
-                layer:removeFromParent()
-            else
-                ff:release()
-                layerbase:removeFromParent();
-            end
+            local bookname = ff:getmybookname()
+            ff:openbook(bookname, bookname)
+            local nn = createbooktitlelistui()
+            layerbase:addChild(nn, 1)
+            layer:removeFromParent()
         end
         local backbtn = createlabelbtn("back", 50, 50, backfun)
         fullscreenposition.set(backbtn, game_width - 50, 0)
         layer:addChild(backbtn, 10)
         return layer
     end
-    createbooklistui = function ()
+    
+    createbooktitlelistui = function ()
         local layer = cc.LayerColor:create(cc.c4b(62,71,193,255),game_width,game_height)
         layer:setAnchorPoint(cc.p(0, 0))
         layer:setPosition(cc.p(0, 0))
 
-        
-        local filelist = ff:getfilelist()
+        local downokevent = ""
+        local filelist = {}
+        for k,v in ipairs(ff:getbooktitlelist()) do
+            local o = {}
+            o.title = v:gettitle()
+            o.gettitle = function()
+                return o.title
+            end
+            o.content = v:getcontent()
+            o.getcontent = function()
+                return o.content
+            end
+            o.path = v:getpath()
+            o.getpath = function()
+                return o.path
+            end
+            table.insert(filelist, o)
+        end
+        --local filelist = ff:getbooktitlelist()
         local cnt = table.getn(filelist)
         if cnt > 0 then
             cnt = cnt - 0
@@ -166,24 +174,29 @@ local function listlocalbook()
             local v = filelist[idx + 1]
             local t = v:gettitle()
             local c = v:getcontent()
+            local p = v:getpath()
             --print("oooooooooooooo", t, c)
             if true then--t ~= "bin" then
                 local tt = {}
                 tt.name = t
-                tt.folder = (c == "folder")
+                tt.folder = false
                 tt.progress = {title = "what", pro = 1}
                 local hh = createbooknamectrl(tt, function()
-                    if c == "folder" then
-                        ff:opendir(t)
-                        local nn = createbooklistui()
-                        layerbase:addChild(nn, 1)
+                    if ff:openbooktitlecontent(t, p) then
+                        local nn = createtxtread()
+                        layerbase:addChild(nn, 2)
                         layer:removeFromParent()
                     else
-                        if ff:openfile(t) then
-                            local nn = createtxtread()
-                            layerbase:addChild(nn, 2)
-                            layer:removeFromParent()
-                        end
+                        downokevent = p .. tostring(os.time)
+                        local fullpath = ff:getmybookname()
+                        downmgr.addexpresstask(p, p, function(xhr, title, downokevent)
+                            response = xhr.response
+                            local ff = my.FileUnit:create("wm.txt")
+                            ff:openbook(fullpath, fullpath)
+                            local biaoti, neirong = xiaoshuoparser.parserxiaoshuo(p, response, false)
+                            ff:addbooktitlecontent(biaoti, neirong, p)
+                            ff:release()
+                        end, downokevent)
                     end
                 end)
                 hh:setAnchorPoint(cc.p(0, 0))
@@ -191,41 +204,120 @@ local function listlocalbook()
             end
         end
         tableview:reloadData()
---        for k,v in ipairs(filelist) do
---            local t = v:gettitle()
---            local c = v:getcontent()
---            --print("oooooooooooooo", t, c)
---            if true then--t ~= "bin" then
---                local tt = {}
---                tt.name = t
---                tt.folder = (c == "folder")
---                tt.progress = {title = "what", pro = 1}
---                local hh = createbooknamectrl(tt, function()
---                    if c == "folder" then
---                        ff:opendir(t)
---                        local nn = createbooklistui()
---                        layerbase:addChild(nn, 1)
---                        layer:removeFromParent()
---                    else
---                        if ff:openfile(t) then
---                        end
---                    end
---                end)
---                hh:setAnchorPoint(cc.p(0, 0))
---                tableview:addCell(hh)
---            end
---        end
---        tableview:reloadData()
 
         local function backfun()
-            if ff:gotoupdir() then
+            if ff:onpageback() then
                 local nn = createbooklistui()
                 layerbase:addChild(nn, 1)
                 layer:removeFromParent()
-            else
-                ff:release()
-                layerbase:removeFromParent();
             end
+        end
+        local backbtn = createlabelbtn("back", 50, 50, backfun)
+        fullscreenposition.set(backbtn, game_width - 50, 0)
+        layer:addChild(backbtn, 10)
+
+        local function downall()
+            local ii = 1
+            for k,v in ipairs(filelist) do
+                local t = v:gettitle()
+                local p = v:getpath()
+                if not ff:openbooktitlecontent(t, p) then
+                    if ii > 1 then
+                        break
+                    end
+--                    print(t, p)
+                    downokevent = "lianxude"
+                    local fullpath = ff:getmybookname()
+                    downmgr.addexpresstask(p, p, function(xhr, title, downokevent)
+                        response = xhr.response
+                        local ff = my.FileUnit:create("wm.txt")
+                        ff:openbook(fullpath, fullpath)
+                        local biaoti, neirong = xiaoshuoparser.parserxiaoshuo(p, response, false)
+                        ff:addbooktitlecontent(biaoti, neirong, p)
+                        print(biaoti)
+                        ff:release()
+                    end, downokevent)
+                    ii = ii + 1
+                end
+            end
+        end
+        local backbtn = createlabelbtn("downall", 50, 50, downall)
+        fullscreenposition.set(backbtn, game_width - 100, 0)
+        layer:addChild(backbtn, 10)
+
+            
+        local function closeevent(event)
+            local eventdata = event._usedata
+            if eventdata == "lianxude" then
+                downall()
+                return
+            end
+        end
+        g_eventDispatcher:addEventListenerWithSceneGraphPriority(cc.EventListenerCustom:create("httpdownevent",closeevent), layer)
+        return layer
+    end
+    createbooklistui = function ()
+        local layer = cc.LayerColor:create(cc.c4b(62,71,193,255),game_width,game_height)
+        layer:setAnchorPoint(cc.p(0, 0))
+        layer:setPosition(cc.p(0, 0))
+
+        
+        local filelist = {}
+        for k,v in ipairs(ff:getbooklist()) do
+            local o = {}
+            o.title = v:gettitle()
+            o.gettitle = function()
+                return o.title
+            end
+            o.content = v:getcontent()
+            o.getcontent = function()
+                return o.content
+            end
+            o.path = v:getpath()
+            o.getpath = function()
+                return o.path
+            end
+            table.insert(filelist, o)
+        end
+        --local filelist = ff:getbooklist()
+        local cnt = table.getn(filelist)
+        if cnt > 0 then
+            cnt = cnt - 0
+        end
+        local tableview  = TableViewCtrl1:create(cnt)
+        tableview:setContentSize(cc.size(game_width, game_height))
+        fullscreenposition.set(tableview, 50, 0)
+        layer:addChild(tableview)
+        tableview.getcellsizefun = function(_, idx)
+            return 80, 200
+        end
+        tableview.updatecellfun = function(_, cell, idx)
+            cell:removeAllChildren()
+            local v = filelist[idx + 1]
+            local t = v:gettitle()
+            local c = v:getcontent()
+            local p = v:getpath()
+            --print("oooooooooooooo", t, c)
+            if true then--t ~= "bin" then
+                local tt = {}
+                tt.name = t
+                tt.folder = true
+                tt.progress = {title = "what", pro = 1}
+                local hh = createbooknamectrl(tt, function()
+                    ff:openbook(t, p)
+                    local nn = createbooktitlelistui()
+                    layerbase:addChild(nn, 1)
+                    layer:removeFromParent()
+                end)
+                hh:setAnchorPoint(cc.p(0, 0))
+                cell:addChild(hh)
+            end
+        end
+        tableview:reloadData()
+
+        local function backfun()
+            ff:release()
+            layerbase:removeFromParent();
         end
         local backbtn = createlabelbtn("back", 50, 50, backfun)
         fullscreenposition.set(backbtn, game_width - 50, 0)

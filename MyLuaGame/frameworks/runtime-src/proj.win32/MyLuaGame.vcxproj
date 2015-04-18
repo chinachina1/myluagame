@@ -163,6 +163,8 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\fileeditsys.h" />
     <ClInclude Include="..\Classes\FileUnit.h" />
+    <ClInclude Include="..\Classes\sqlite3.h" />
+    <ClInclude Include="..\Classes\sqlite3ext.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
@@ -170,6 +172,8 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\fileeditsys.cpp" />
     <ClCompile Include="..\Classes\FileUnit.cpp" />
+    <ClCompile Include="..\Classes\shell.c" />
+    <ClCompile Include="..\Classes\sqlite3.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

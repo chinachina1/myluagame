@@ -469,6 +469,100 @@ int lua_custom_api_FileUnit_openfile(lua_State* tolua_S)
 
     return 0;
 }
+int lua_custom_api_FileUnit_getbooktitlelist(lua_State* tolua_S)
+{
+    int argc = 0;
+    FileUnit* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"FileUnit",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (FileUnit*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_custom_api_FileUnit_getbooktitlelist'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+            return 0;
+        cocos2d::Vector<celldef *>& ret = cobj->getbooktitlelist();
+        ccvector_to_luaval(tolua_S, ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "getbooktitlelist",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_getbooktitlelist'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_custom_api_FileUnit_addbooktitle(lua_State* tolua_S)
+{
+    int argc = 0;
+    FileUnit* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"FileUnit",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (FileUnit*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_custom_api_FileUnit_addbooktitle'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 2) 
+    {
+        std::string arg0;
+        std::string arg1;
+
+        ok &= luaval_to_std_string(tolua_S, 2,&arg0);
+
+        ok &= luaval_to_std_string(tolua_S, 3,&arg1);
+        if(!ok)
+            return 0;
+        bool ret = cobj->addbooktitle(arg0, arg1);
+        tolua_pushboolean(tolua_S,(bool)ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "addbooktitle",argc, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_addbooktitle'.",&tolua_err);
+#endif
+
+    return 0;
+}
 int lua_custom_api_FileUnit_getfullpath(lua_State* tolua_S)
 {
     int argc = 0;
@@ -557,6 +651,56 @@ int lua_custom_api_FileUnit_gotoupdir(lua_State* tolua_S)
 
     return 0;
 }
+int lua_custom_api_FileUnit_openbooktitlecontent(lua_State* tolua_S)
+{
+    int argc = 0;
+    FileUnit* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"FileUnit",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (FileUnit*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_custom_api_FileUnit_openbooktitlecontent'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 2) 
+    {
+        std::string arg0;
+        std::string arg1;
+
+        ok &= luaval_to_std_string(tolua_S, 2,&arg0);
+
+        ok &= luaval_to_std_string(tolua_S, 3,&arg1);
+        if(!ok)
+            return 0;
+        bool ret = cobj->openbooktitlecontent(arg0, arg1);
+        tolua_pushboolean(tolua_S,(bool)ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "openbooktitlecontent",argc, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_openbooktitlecontent'.",&tolua_err);
+#endif
+
+    return 0;
+}
 int lua_custom_api_FileUnit_getfilelist(lua_State* tolua_S)
 {
     int argc = 0;
@@ -627,21 +771,24 @@ int lua_custom_api_FileUnit_createfile(lua_State* tolua_S)
 #endif
 
     argc = lua_gettop(tolua_S)-1;
-    if (argc == 2) 
+    if (argc == 3) 
     {
         std::string arg0;
         std::string arg1;
+        std::string arg2;
 
         ok &= luaval_to_std_string(tolua_S, 2,&arg0);
 
         ok &= luaval_to_std_string(tolua_S, 3,&arg1);
+
+        ok &= luaval_to_std_string(tolua_S, 4,&arg2);
         if(!ok)
             return 0;
-        bool ret = cobj->createfile(arg0, arg1);
+        bool ret = cobj->createfile(arg0, arg1, arg2);
         tolua_pushboolean(tolua_S,(bool)ret);
         return 1;
     }
-    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "createfile",argc, 2);
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "createfile",argc, 3);
     return 0;
 
 #if COCOS2D_DEBUG >= 1
@@ -695,6 +842,153 @@ int lua_custom_api_FileUnit_getcurfile(lua_State* tolua_S)
 
     return 0;
 }
+int lua_custom_api_FileUnit_getbooktitlecontent(lua_State* tolua_S)
+{
+    int argc = 0;
+    FileUnit* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"FileUnit",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (FileUnit*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_custom_api_FileUnit_getbooktitlecontent'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+            return 0;
+        std::string ret = cobj->getbooktitlecontent();
+        tolua_pushcppstring(tolua_S,ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "getbooktitlecontent",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_getbooktitlecontent'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_custom_api_FileUnit_createnewbook(lua_State* tolua_S)
+{
+    int argc = 0;
+    FileUnit* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"FileUnit",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (FileUnit*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_custom_api_FileUnit_createnewbook'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 2) 
+    {
+        std::string arg0;
+        std::string arg1;
+
+        ok &= luaval_to_std_string(tolua_S, 2,&arg0);
+
+        ok &= luaval_to_std_string(tolua_S, 3,&arg1);
+        if(!ok)
+            return 0;
+        bool ret = cobj->createnewbook(arg0, arg1);
+        tolua_pushboolean(tolua_S,(bool)ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "createnewbook",argc, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_createnewbook'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_custom_api_FileUnit_addbooktitlecontent(lua_State* tolua_S)
+{
+    int argc = 0;
+    FileUnit* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"FileUnit",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (FileUnit*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_custom_api_FileUnit_addbooktitlecontent'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 3) 
+    {
+        std::string arg0;
+        std::string arg1;
+        std::string arg2;
+
+        ok &= luaval_to_std_string(tolua_S, 2,&arg0);
+
+        ok &= luaval_to_std_string(tolua_S, 3,&arg1);
+
+        ok &= luaval_to_std_string(tolua_S, 4,&arg2);
+        if(!ok)
+            return 0;
+        bool ret = cobj->addbooktitlecontent(arg0, arg1, arg2);
+        tolua_pushboolean(tolua_S,(bool)ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "addbooktitlecontent",argc, 3);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_addbooktitlecontent'.",&tolua_err);
+#endif
+
+    return 0;
+}
 int lua_custom_api_FileUnit_opendir(lua_State* tolua_S)
 {
     int argc = 0;
@@ -738,6 +1032,238 @@ int lua_custom_api_FileUnit_opendir(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_opendir'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_custom_api_FileUnit_getbooklist(lua_State* tolua_S)
+{
+    int argc = 0;
+    FileUnit* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"FileUnit",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (FileUnit*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_custom_api_FileUnit_getbooklist'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+            return 0;
+        cocos2d::Vector<celldef *>& ret = cobj->getbooklist();
+        ccvector_to_luaval(tolua_S, ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "getbooklist",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_getbooklist'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_custom_api_FileUnit_getmybookname(lua_State* tolua_S)
+{
+    int argc = 0;
+    FileUnit* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"FileUnit",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (FileUnit*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_custom_api_FileUnit_getmybookname'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+            return 0;
+        std::string ret = cobj->getmybookname();
+        tolua_pushcppstring(tolua_S,ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "getmybookname",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_getmybookname'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_custom_api_FileUnit_openbooktitle(lua_State* tolua_S)
+{
+    int argc = 0;
+    FileUnit* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"FileUnit",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (FileUnit*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_custom_api_FileUnit_openbooktitle'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 2) 
+    {
+        std::string arg0;
+        std::string arg1;
+
+        ok &= luaval_to_std_string(tolua_S, 2,&arg0);
+
+        ok &= luaval_to_std_string(tolua_S, 3,&arg1);
+        if(!ok)
+            return 0;
+        bool ret = cobj->openbooktitle(arg0, arg1);
+        tolua_pushboolean(tolua_S,(bool)ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "openbooktitle",argc, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_openbooktitle'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_custom_api_FileUnit_openbook(lua_State* tolua_S)
+{
+    int argc = 0;
+    FileUnit* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"FileUnit",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (FileUnit*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_custom_api_FileUnit_openbook'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 2) 
+    {
+        std::string arg0;
+        std::string arg1;
+
+        ok &= luaval_to_std_string(tolua_S, 2,&arg0);
+
+        ok &= luaval_to_std_string(tolua_S, 3,&arg1);
+        if(!ok)
+            return 0;
+        bool ret = cobj->openbook(arg0, arg1);
+        tolua_pushboolean(tolua_S,(bool)ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "openbook",argc, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_openbook'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_custom_api_FileUnit_onpageback(lua_State* tolua_S)
+{
+    int argc = 0;
+    FileUnit* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"FileUnit",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (FileUnit*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_custom_api_FileUnit_onpageback'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+            return 0;
+        bool ret = cobj->onpageback();
+        tolua_pushboolean(tolua_S,(bool)ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "onpageback",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_custom_api_FileUnit_onpageback'.",&tolua_err);
 #endif
 
     return 0;
@@ -836,12 +1362,23 @@ int lua_register_custom_api_FileUnit(lua_State* tolua_S)
         tolua_function(tolua_S,"createdir",lua_custom_api_FileUnit_createdir);
         tolua_function(tolua_S,"gotorootdir",lua_custom_api_FileUnit_gotorootdir);
         tolua_function(tolua_S,"openfile",lua_custom_api_FileUnit_openfile);
+        tolua_function(tolua_S,"getbooktitlelist",lua_custom_api_FileUnit_getbooktitlelist);
+        tolua_function(tolua_S,"addbooktitle",lua_custom_api_FileUnit_addbooktitle);
         tolua_function(tolua_S,"getfullpath",lua_custom_api_FileUnit_getfullpath);
         tolua_function(tolua_S,"gotoupdir",lua_custom_api_FileUnit_gotoupdir);
+        tolua_function(tolua_S,"openbooktitlecontent",lua_custom_api_FileUnit_openbooktitlecontent);
         tolua_function(tolua_S,"getfilelist",lua_custom_api_FileUnit_getfilelist);
         tolua_function(tolua_S,"createfile",lua_custom_api_FileUnit_createfile);
         tolua_function(tolua_S,"getcurfile",lua_custom_api_FileUnit_getcurfile);
+        tolua_function(tolua_S,"getbooktitlecontent",lua_custom_api_FileUnit_getbooktitlecontent);
+        tolua_function(tolua_S,"createnewbook",lua_custom_api_FileUnit_createnewbook);
+        tolua_function(tolua_S,"addbooktitlecontent",lua_custom_api_FileUnit_addbooktitlecontent);
         tolua_function(tolua_S,"opendir",lua_custom_api_FileUnit_opendir);
+        tolua_function(tolua_S,"getbooklist",lua_custom_api_FileUnit_getbooklist);
+        tolua_function(tolua_S,"getmybookname",lua_custom_api_FileUnit_getmybookname);
+        tolua_function(tolua_S,"openbooktitle",lua_custom_api_FileUnit_openbooktitle);
+        tolua_function(tolua_S,"openbook",lua_custom_api_FileUnit_openbook);
+        tolua_function(tolua_S,"onpageback",lua_custom_api_FileUnit_onpageback);
         tolua_function(tolua_S,"runcommand",lua_custom_api_FileUnit_runcommand);
         tolua_function(tolua_S,"create", lua_custom_api_FileUnit_create);
     tolua_endmodule(tolua_S);

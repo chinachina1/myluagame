@@ -243,7 +243,7 @@ local function main()
     --sceneGame:addChild(createLayerMenu())
     print("pppppppppppppp", my, my.FileUnit, my.FileUnit.new)
     do
-	local ff = my.FileUnit:create("wm.txt")
+	local ff = my.FileUnit:create("wm.db")
 --    ff:createdir("put")
 --    ff:createdir("in")
 --    ff:createdir("out")
@@ -253,7 +253,7 @@ local function main()
 --    ff:opendir("in")
 --    ff:openfile("123.txt")
 --    print("kkkk", ff:getcurfile())
-    local ll = ff:getfilelist()
+--    local ll = ff:getfilelist()
 --    for k,v in pairs(ll) do
 --        print(v:gettitle())
 --    end

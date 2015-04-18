@@ -6,6 +6,7 @@
 #include <vector>
 #include <stack>
 #include "fileeditsys.h"
+#include "sqlite3.h"
 USING_NS_CC;
 class celldef : public Ref
 {
@@ -55,13 +56,14 @@ public:
 	Vector<celldef*>& getbooklist();
 	bool createnewbook(std::string name, std::string url);//url == key
 	bool openbook(std::string name, std::string url);
-	Vector<celldef*>& getbooktitlelist(std::string name, std::string url);
+	Vector<celldef*>& getbooktitlelist();
 	bool addbooktitle(std::string name, std::string url);//url == key
 	bool openbooktitle(std::string name, std::string url);
 	bool addbooktitlecontent(std::string title, std::string content, std::string url);
 	bool openbooktitlecontent(std::string name, std::string url);
 	std::string getbooktitlecontent();
 	bool onpageback();
+	std::string getmybookname();
 private:
 	std::string m_filename;
 	fileeditsys* m_pfileeditsys;
@@ -79,6 +81,7 @@ private:
 	//	long length;
 	//} unionlen;
 	Vector<celldef*> m_celllist;
+	sqlite3* m_psqlite3;
 };
 
 

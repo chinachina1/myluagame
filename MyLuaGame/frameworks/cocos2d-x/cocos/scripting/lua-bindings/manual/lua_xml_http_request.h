@@ -95,7 +95,7 @@ public:
     inline std::string getDataStr() { return _data.str(); }
     
     inline size_t getDataSize() {   return _dataSize; }
-    
+    int getsucceed() {return _succeed;}
 private:
     void _gotHeader(std::string header);
     
@@ -116,6 +116,7 @@ private:
     bool                                 _withCredentialsValue;
     std::map<std::string, std::string>   _httpHeader;
     std::map<std::string, std::string>   _requestHeader;
+	int									 _succeed;
 };
 
 TOLUA_API int register_xml_http_request(lua_State* L);

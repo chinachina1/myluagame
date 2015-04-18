@@ -171,11 +171,12 @@ bool fileeditsys::readstring(string& s)
 {
 	m_readtempbuff.clear();
 	char a = 0;
-	while (fread(&a, 1, 1, m_filehandle) && a)
+	int len = 0;
+	while ((len = fread(&a, 1, 1, m_filehandle)) && a)
 	{
 		m_readtempbuff.push_back(a);
 	}
-	if (a != 0 || m_readtempbuff.size() == 0)
+	if (len == 0)
 	{
 		return false;
 	}

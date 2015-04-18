@@ -13,7 +13,7 @@ local curdowninfocell = nil
 
 local function getfirstjob()
     local cur = needdownqueue[1]
-    needdownqueue[1] = nil
+    table.remove(needdownqueue, 1)
     return cur
 end
 
@@ -46,7 +46,22 @@ local function dofirstwork()
     xhr:send()
 end
 
-local function addexpresstask(title, url, dataoperafun, downokevent)
+local function istitlerepeat(title)
+    if curdowninfocell and curdowninfocell.title == title then
+        return true
+    end
+    for k,v in ipairs(needdownqueue) do
+        if v.title == title then
+            return true
+        end
+    end
+    return false
+end
+
+local function addexpresstask(title, url, dataoperafun, downokevent)--title key
+    if istitlerepeat(title) then
+        return
+    end
     local o = newdowninfocell()
     o.title = title
     o.url = url
@@ -56,7 +71,10 @@ local function addexpresstask(title, url, dataoperafun, downokevent)
     dofirstwork()
 end
 
-local function addnormaltask(title, url, dataoperafun, downokevent)
+local function addnormaltask(title, url, dataoperafun, downokevent)--title key
+    if istitlerepeat(title) then
+        return
+    end
     local o = newdowninfocell()
     o.title = title
     o.url = url
