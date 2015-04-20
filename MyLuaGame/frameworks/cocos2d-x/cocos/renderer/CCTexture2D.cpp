@@ -1139,7 +1139,7 @@ bool Texture2D::initWithString(const char *text, const FontDefinition& textDefin
         free(outTempData);
     }
     _hasPremultipliedAlpha = hasPremultipliedAlpha;
-
+	this->setAliasTexParameters();  
     return ret;
 }
 

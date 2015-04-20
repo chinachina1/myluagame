@@ -4,6 +4,15 @@ require "src/downmanger"
 require "src/xiaoshuoparser"
 local xiaoshuo = {}
 
+local normalfontsize = 20
+xpcall(function()
+local glview = cc.Director:getInstance():getOpenGLView()
+local factor = ( glview:getScaleX() + glview:getScaleY() ) / 2
+local MOVE_INCH = 49/160
+normalfontsize = getdevicedpi() * MOVE_INCH / factor
+normalfontsize = math.floor(normalfontsize)
+end, __G__TRACKBACK__)
+
 function downurl(str, callfun)
     local xhr = cc.XMLHttpRequest:new()
     xhr.responseType = cc.XMLHTTPREQUEST_RESPONSE_STRING
@@ -65,7 +74,7 @@ local function inputurlpathdlg()
     editboxusername:setFontSize(22)
     editboxusername:setMaxLength(96)
     editboxusername:setReturnType(cc.KEYBOARD_RETURNTYPE_GO)
-    editboxusername:setText("http://www.biquge.la/book/14/")
+    editboxusername:setText("http://wanmeishijiexiaoshuo.org/")
     fullscreenposition.set(editboxusername, 50, 30)
     layer:addChild(editboxusername)
 
@@ -77,11 +86,15 @@ local function inputurlpathdlg()
         downmgr.addexpresstask(str, str, function(xhr, title, downokevent)
             response = xhr.response
             local ff = my.FileUnit:create("wm.txt")
-            local xiaoshuomingzi, xiaoshuozhangjie = xiaoshuoparser.parserxiaoshuo(str, response, true)
+            local xiaoshuomingzi, xiaoshuozhangjie, needbase = xiaoshuoparser.parserxiaoshuo(str, response, true)
             ff:createnewbook(xiaoshuomingzi, str)
             ff:openbook(xiaoshuomingzi, str)
             for k,v in ipairs(xiaoshuozhangjie) do
-                ff:addbooktitle(v[1], str .. v[2])
+                if needbase then
+                    ff:addbooktitle(v[1], str .. v[2])
+                else
+                    ff:addbooktitle(v[1], v[2])
+                end
             end
             ff:release()
         end, downokevent)
@@ -111,12 +124,13 @@ local function listlocalbook()
     local createtxtread
     local ff = my.FileUnit:create("wm.txt")
     createtxtread = function ()
-        local layer = cc.LayerColor:create(cc.c4b(62,71,193,255),game_width,game_height)
+        local layer = cc.LayerColor:create(cc.c4b(255,255,255,255),game_width,game_height)
         layer:setAnchorPoint(cc.p(0, 0))
         layer:setPosition(cc.p(0, 0))
         
         local str = ff:getbooktitlecontent()
-        local lab = cc.Label:createWithTTF(str, "src/yu.ttf", 20, cc.size(game_width - 100, 0))
+        local lab = cc.Label:createWithTTF(str, "src/hui.ttf", normalfontsize, cc.size(game_width - 50, 0))
+        lab:setColor(cc.c3b(0, 0, 0))
         lab:setAnchorPoint(cc.p(0, 1))
         lab:setPosition(cc.p(0, game_height))
         layer:addChild(lab)
@@ -225,7 +239,7 @@ local function listlocalbook()
                     if ii > 1 then
                         break
                     end
---                    print(t, p)
+                    print(t, p)
                     downokevent = "lianxude"
                     local fullpath = ff:getmybookname()
                     downmgr.addexpresstask(p, p, function(xhr, title, downokevent)

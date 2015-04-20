@@ -7,7 +7,11 @@ LOCAL_MODULE := cocos2dlua_shared
 LOCAL_MODULE_FILENAME := libcocos2dlua
 
 LOCAL_SRC_FILES := hellolua/main.cpp \
-                   ../../Classes/AppDelegate.cpp
+                   ../../Classes/AppDelegate.cpp \
+				   ../../Classes/fileeditsys.cpp \
+				   ../../Classes/FileUnit.cpp \
+				   ../../Classes/shell.c \
+				   ../../Classes/sqlite3.c \
 
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes

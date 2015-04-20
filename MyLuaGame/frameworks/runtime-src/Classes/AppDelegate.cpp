@@ -104,19 +104,27 @@ AppDelegate::~AppDelegate()
     SimpleAudioEngine::end();
 }
 
+int getdevicedpi(lua_State *luastate)
+{
+	lua_pushinteger(luastate, (lua_Integer)Device::getDPI());
+	return 1;
+}
+
 bool AppDelegate::applicationDidFinishLaunching()
 {
     auto engine = LuaEngine::getInstance();
     ScriptEngineManager::getInstance()->setScriptEngine(engine);
-    if (engine->executeScriptFile("src/main.lua")) {
-        return false;
-    }
 
 	const luaL_reg global_functions [] = {
 		{"GBKToUTF8", luaA_Strg2u},
+		{"getdevicedpi", getdevicedpi},
 		{NULL, NULL}
 	};
 	luaL_register(engine->getLuaStack()->getLuaState(), "_G", global_functions);
+
+	if (engine->executeScriptFile("src/main.lua")) {
+		return false;
+	}
     return true;
 }
 

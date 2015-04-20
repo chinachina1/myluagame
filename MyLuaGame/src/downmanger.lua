@@ -37,7 +37,7 @@ local function dofirstwork()
     xhr:open("GET", curdowninfocell.url)
     local function downok() 
         local res = xhr.succeed
-        if res == 0 then
+        if res == 1 then
             local response = xhr.response
             curdowninfocell.dataoperatefun(xhr, curdowninfocell.title, curdowninfocell.downeventname)
             senddownevent()
@@ -47,6 +47,7 @@ local function dofirstwork()
             local tttt = curdowninfocell
             curdowninfocell = nil
             table.insert(needdownqueue, tttt)
+            print(tttt.url)
             dofirstwork()
         end
     end

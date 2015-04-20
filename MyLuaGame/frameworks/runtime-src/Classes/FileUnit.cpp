@@ -9,6 +9,9 @@ FileUnit* FileUnit::create(std::string filename)
 FileUnit::FileUnit(std::string filename)
 {
 	m_filename = "D:/" + filename; 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	m_filename = "/mnt/sdcard/" + filename; 
+#endif
 	m_pfileeditsys = NULL;
 	m_pfileeditsys = fileeditsys::create(m_filename);
 	if (m_pfileeditsys)

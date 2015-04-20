@@ -186,7 +186,7 @@ void LuaMinXmlHttpRequest::_sendRequest()
         {
             CCLOG("%s completed", response->getHttpRequest()->getTag());
         }
-        
+         
         long statusCode = response->getResponseCode();
         char statusString[64] = {};
         sprintf(statusString, "HTTP Status Code: %ld, tag = %s", statusCode, response->getHttpRequest()->getTag());

@@ -39,6 +39,7 @@ LOCAL_SRC_FILES := manual/CCLuaBridge.cpp \
           auto/lua_cocos2dx_physics_auto.cpp \
           auto/lua_cocos2dx_experimental_auto.cpp \
           auto/lua_cocos2dx_experimental_video_auto.cpp \
+		  auto/lua_custom_api_auto.cpp \
           ../../../external/lua/tolua/tolua_event.c \
           ../../../external/lua/tolua/tolua_is.c \
           ../../../external/lua/tolua/tolua_map.c \
@@ -76,7 +77,8 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../external/lua/tolua \
                     $(LOCAL_PATH)/manual \
                     $(LOCAL_PATH)/manual/platform/android \
                     $(LOCAL_PATH)/manual/platform/android/jni \
-                    $(LOCAL_PATH)/../../../external/xxtea
+                    $(LOCAL_PATH)/../../../external/xxtea \
+					$(LOCAL_PATH)/../../../../runtime-src/Classes
 
 
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/../../../external/lua/tolua \

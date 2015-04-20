@@ -2,3 +2,8 @@
 *.sdf
 *.opensdf
 Debug.win32/
+runtime/
+bin/
+gen/
+libs/
+obj/
