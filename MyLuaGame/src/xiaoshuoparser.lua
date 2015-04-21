@@ -33,7 +33,7 @@ local function biquge(content, isdir)
         content = changetoutf8(content)
         local biaoti = ""
         local neirong = ""
-        print(content)
+        --print(content)
         local _, _, tt = string.find(content, "<meta name=\"keywords\" content=\"([^<]*)\" />")
         tt = tt or ""
         biaoti = tt

@@ -104,8 +104,9 @@ private:
 	bool editfiledata(treecell&);
 	//newapi
 	map<vector<string>, fpos> m_fastindex;
-public:
-
+private:
+	void addcashpath(vector<string> cmd, fpos fp);
+	bool getcashpath(vector<string> &inandout, fpos &fp);
 };
 
 #endif

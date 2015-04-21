@@ -5,11 +5,16 @@ require "src/xiaoshuoparser"
 local xiaoshuo = {}
 
 local normalfontsize = 20
+xpcall(function()
 local glview = cc.Director:getInstance():getOpenGLView()
 local factor = ( glview:getScaleX() + glview:getScaleY() ) / 2
 local MOVE_INCH = 49/160
-normalfontsize = getdevicedpi() * MOVE_INCH / factor
-normalfontsize = math.floor(normalfontsize)
+local realsize = glview:getVisibleSize()
+--normalfontsize = getdevicedpi() * MOVE_INCH / factor
+local ff = math.min(realsize.width / game_width, realsize.height / game_height)
+normalfontsize = 20 * ff
+normalfontsize = math.cell(normalfontsize)
+end, __G__TRACKBACK__)
 
 function downurl(str, callfun)
     local xhr = cc.XMLHttpRequest:new()
@@ -129,9 +134,34 @@ local function listlocalbook()
         local str = ff:getbooktitlecontent()
         local lab = cc.Label:createWithTTF(str, "src/hui.ttf", normalfontsize, cc.size(game_width - 50, 0))
         lab:setColor(cc.c3b(0, 0, 0))
-        lab:setAnchorPoint(cc.p(0, 1))
-        lab:setPosition(cc.p(0, game_height))
+        lab:setAnchorPoint(cc.p(0, 0))
+        lab:setPosition(cc.p(0, game_height - lab:getContentSize().height))
         layer:addChild(lab)
+
+        if lab:getContentSize().height > game_height then
+            local touchbeginpos = cc.p(0, 0)
+            local function onTouchBegin(touch,event)
+                touchbeginpos = touch:getLocation()
+                return true
+            end
+            local function onTouchMove(touch,event)
+                local pos = touch:getLocation()
+                local dif = pos.y - touchbeginpos.y
+                dif = lab:getPositionY() + dif / 4
+                dif = math.min(0, dif)
+                dif = math.max(game_height - lab:getContentSize().height, dif)
+                lab:setPositionY(dif)
+            end
+            local function onTouchEnd(touch,event)
+            end
+            local listener = cc.EventListenerTouchOneByOne:create()
+            listener:setSwallowTouches(true)
+            listener:registerScriptHandler(onTouchBegin,cc.Handler.EVENT_TOUCH_BEGAN )
+            listener:registerScriptHandler(onTouchMove,cc.Handler.EVENT_TOUCH_MOVED )
+            listener:registerScriptHandler(onTouchEnd,cc.Handler.EVENT_TOUCH_ENDED )
+            local eventDispatcher = layer:getEventDispatcher()
+            eventDispatcher:addEventListenerWithSceneGraphPriority(listener, layer)
+        end
 
         local function backfun()
             local bookname = ff:getmybookname()

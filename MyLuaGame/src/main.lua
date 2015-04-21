@@ -235,7 +235,12 @@ local function main()
 		print("set path ok")
 		local first = require "src/first"
     -- run
+    require "src/syn"
+    local function update(dt)
+        syn.tick(dt)
+    end
     local sceneGame = cc.Scene:create()
+    sceneGame:scheduleUpdateWithPriorityLua(update,0)
     g_eventDispatcher = sceneGame:getEventDispatcher()
     sceneGame:addChild(first())
 		print("print first path", cc.FileUtils:getInstance():fullPathForFilename("src/first.lua"), first, first())

@@ -335,10 +335,21 @@ bool fileeditsys::findfiledata(vector<string> cmd, treecellpoint& infile)
 		}
 		return true;
 	}
+	vector<string> cashcmd = cmd;
 	fpos bp = 0;
-	for (int i = 0; i < (int)cmd.size(); i++)
+	getcashpath(cashcmd, bp);
+	if (cashcmd == cmd)
 	{
-		string str = cmd[i];
+		if (setfilepos(bp)&& readfiletreecelldata(infile._cell))
+		{
+			return true;
+		}
+		return false;
+	}
+	vector<string> lastcmd(cmd.begin() + (int)cashcmd.size(), cmd.end());
+	for (int i = 0; i < (int)lastcmd.size(); i++)
+	{
+		string str = lastcmd[i];
 		if (setfilepos(bp)&& readfiletreecelldata(infile._cell))
 		{
 			if (infile._cell.title == str)
@@ -382,6 +393,7 @@ bool fileeditsys::findfiledata(vector<string> cmd, treecellpoint& infile)
 			return false;
 		}
 	}
+	addcashpath(cmd, infile._cell.beginpos);
 	return true;
 }
 
@@ -466,6 +478,9 @@ bool fileeditsys::addfiledata(vector<string> cmd, string title, string content, 
 		{
 			return false;
 		}
+		vector<string> tmpv(cmd.begin(), cmd.end());
+		tmpv.push_back(title);
+		addcashpath(tmpv, bb);
 		treecell firstbrother;
 		if (getfirstchild(cmd, firstbrother))
 		{
@@ -584,4 +599,46 @@ bool fileeditsys::addfiledata(treecell& tt)
 bool fileeditsys::editfiledata(treecell& tt)
 {
 	return addfiledata(tt);
+}
+
+void fileeditsys::addcashpath(vector<string> cmd, fpos fp)
+{
+	m_fastindex[cmd] = fp;
+}
+
+bool fileeditsys::getcashpath(vector<string> &inorout, fpos &fp)
+{
+	vector<string> cmd(inorout.begin(), inorout.end());
+	while (! cmd.empty())
+	{
+		auto it = m_fastindex.find(cmd);
+		if (it != m_fastindex.end())
+		{
+			//inorout = cmd;
+			//fp = m_fastindex[cmd];
+			break;
+		}
+		cmd.pop_back();
+	}
+	if (!cmd.empty() && cmd != inorout)
+	{
+		inorout = cmd;
+		fp = m_fastindex[cmd];
+		treecell cell;
+		if (setfilepos(fp)&& readfiletreecelldata(cell))
+		{
+			fp = cell.childpos;
+		}
+		else
+		{
+			inorout.clear();
+			fp = 0;
+		}
+	}
+	else
+	{
+		inorout = cmd;
+		fp = m_fastindex[cmd];
+	}
+	return true;
 }
