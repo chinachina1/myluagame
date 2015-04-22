@@ -132,27 +132,45 @@ local function listlocalbook()
         layer:setPosition(cc.p(0, 0))
         
         local str = ff:getbooktitlecontent()
-        local lab = cc.Label:createWithTTF(str, "src/hui.ttf", normalfontsize, cc.size(game_width - 50, 0))
+        local lab = cc.Label:createWithTTF(str, "src/hui.ttf", normalfontsize, cc.size(game_width, 0))
         lab:setColor(cc.c3b(0, 0, 0))
         lab:setAnchorPoint(cc.p(0, 0))
         lab:setPosition(cc.p(0, game_height - lab:getContentSize().height))
         layer:addChild(lab)
 
+        local function backfun()
+            local bookname = ff:getmybookname()
+            ff:openbook(bookname, bookname)
+            local nn = createbooktitlelistui()
+            layerbase:addChild(nn, 1)
+            layer:removeFromParent()
+        end
+
+        local touchremeber = {}
         if lab:getContentSize().height > game_height then
             local touchbeginpos = cc.p(0, 0)
             local function onTouchBegin(touch,event)
                 touchbeginpos = touch:getLocation()
+                touchremeber = {}
                 return true
             end
             local function onTouchMove(touch,event)
                 local pos = touch:getLocation()
                 local dif = pos.y - touchbeginpos.y
-                dif = lab:getPositionY() + dif / 4
+                dif = lab:getPositionY() + dif
                 dif = math.min(0, dif)
                 dif = math.max(game_height - lab:getContentSize().height, dif)
                 lab:setPositionY(dif)
+                touchbeginpos = pos
+                table.insert(touchremeber, pos)
             end
             local function onTouchEnd(touch,event)
+                if table.getn(touchremeber) == 0 then
+                    local dif = lab:getPositionY() + game_height - 20
+                    dif = math.min(0, dif)
+                    dif = math.max(game_height - lab:getContentSize().height, dif)
+                    lab:setPositionY(dif)
+                end
             end
             local listener = cc.EventListenerTouchOneByOne:create()
             listener:setSwallowTouches(true)
@@ -162,17 +180,24 @@ local function listlocalbook()
             local eventDispatcher = layer:getEventDispatcher()
             eventDispatcher:addEventListenerWithSceneGraphPriority(listener, layer)
         end
+--        local backbtn = createlabelbtn("back", 50, 50, backfun)
+--        fullscreenposition.set(backbtn, game_width - 50, 0)
+--        layer:addChild(backbtn, 10)
 
-        local function backfun()
-            local bookname = ff:getmybookname()
-            ff:openbook(bookname, bookname)
-            local nn = createbooktitlelistui()
-            layerbase:addChild(nn, 1)
-            layer:removeFromParent()
+        local function keyclick(keycode)
+            print(keycode)
+            if keycode == "menuClicked" then
+                --backfun()
+            else
+                backfun()
+            end
         end
-        local backbtn = createlabelbtn("back", 50, 50, backfun)
-        fullscreenposition.set(backbtn, game_width - 50, 0)
-        layer:addChild(backbtn, 10)
+        layer:registerScriptKeypadHandler(keyclick)
+        layer:setKeyboardEnabled(true)
+--        local listener = cc.EventListenerKeyboard:create()
+--        listener:registerScriptHandler(keyclick,cc.Handler.EVENT_KEYBOARD_PRESSED )
+--        local eventDispatcher = layer:getEventDispatcher()
+--        eventDispatcher:addEventListenerWithSceneGraphPriority(listener, layer)
         return layer
     end
     

@@ -87,6 +87,20 @@ local function createfirstlayer()
 --			cc.Director:getInstance():runWithScene(sceneGame)
 --		end
 --	end)))
+    syn.create(function()
+        for i = 0, 10, 1 do
+            print("ssssssssssssss update", i)
+        end
+    end, function()
+        print("thread end 1")
+    end)
+    syn.create(function()
+        for i = 0, 10, 1 do
+            print("fffffffffffff update", i)
+        end
+    end, function()
+        print("thread end 2")
+    end)
 	return layer
 end
 

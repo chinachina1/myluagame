@@ -110,6 +110,17 @@ int getdevicedpi(lua_State *luastate)
 	return 1;
 }
 
+void setfileorder(bool flag)
+{
+	static bool firstflag = true;
+	if (firstflag != flag)
+	{
+		vector<string> _vec(FileUtils::getInstance()->getSearchPaths().crbegin(), FileUtils::getInstance()->getSearchPaths().crend());
+		FileUtils::getInstance()->setSearchPaths(_vec);
+		firstflag = flag;
+	}
+}
+
 bool AppDelegate::applicationDidFinishLaunching()
 {
     auto engine = LuaEngine::getInstance();

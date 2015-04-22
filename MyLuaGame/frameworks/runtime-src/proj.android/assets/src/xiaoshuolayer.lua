@@ -13,7 +13,7 @@ local realsize = glview:getVisibleSize()
 --normalfontsize = getdevicedpi() * MOVE_INCH / factor
 local ff = math.min(realsize.width / game_width, realsize.height / game_height)
 normalfontsize = 20 * ff
-normalfontsize = math.cell(normalfontsize)
+normalfontsize = math.floor(normalfontsize)
 end, __G__TRACKBACK__)
 
 function downurl(str, callfun)
@@ -132,7 +132,7 @@ local function listlocalbook()
         layer:setPosition(cc.p(0, 0))
         
         local str = ff:getbooktitlecontent()
-        local lab = cc.Label:createWithTTF(str, "src/hui.ttf", normalfontsize, cc.size(game_width - 50, 0))
+        local lab = cc.Label:createWithTTF(str, "src/hui.ttf", normalfontsize, cc.size(game_width, 0))
         lab:setColor(cc.c3b(0, 0, 0))
         lab:setAnchorPoint(cc.p(0, 0))
         lab:setPosition(cc.p(0, game_height - lab:getContentSize().height))
@@ -147,10 +147,11 @@ local function listlocalbook()
             local function onTouchMove(touch,event)
                 local pos = touch:getLocation()
                 local dif = pos.y - touchbeginpos.y
-                dif = lab:getPositionY() + dif / 4
+                dif = lab:getPositionY() + dif
                 dif = math.min(0, dif)
                 dif = math.max(game_height - lab:getContentSize().height, dif)
                 lab:setPositionY(dif)
+                touchbeginpos = pos
             end
             local function onTouchEnd(touch,event)
             end
@@ -170,9 +171,17 @@ local function listlocalbook()
             layerbase:addChild(nn, 1)
             layer:removeFromParent()
         end
-        local backbtn = createlabelbtn("back", 50, 50, backfun)
-        fullscreenposition.set(backbtn, game_width - 50, 0)
-        layer:addChild(backbtn, 10)
+--        local backbtn = createlabelbtn("back", 50, 50, backfun)
+--        fullscreenposition.set(backbtn, game_width - 50, 0)
+--        layer:addChild(backbtn, 10)
+
+        local function keyclick(keycode)
+            print(keycode)
+            if keycode == "backClicked" then
+                backfun()
+            end
+        end
+        layer:registerScriptKeypadHandler(keyclick)
         return layer
     end
     

@@ -19,6 +19,7 @@ FileUnit::FileUnit(std::string filename)
 		if (m_pfileeditsys->filedataisempty())
 		{
 			m_pfileeditsys->addfiledata(NULL, "index", "folder");
+			m_pfileeditsys->addfiledata(NULL, "mate", "folder");
 		}
 	}
 	m_curpath.push_back("index");

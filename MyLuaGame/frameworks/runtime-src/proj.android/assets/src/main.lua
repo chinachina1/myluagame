@@ -231,11 +231,16 @@ local function main()
     cc.SimpleAudioEngine:getInstance():playMusic(bgMusicPath, true)
     local effectPath = cc.FileUtils:getInstance():fullPathForFilename("effect1.wav")
     cc.SimpleAudioEngine:getInstance():preloadEffect(effectPath)
-		cc.FileUtils:getInstance():addSearchPath("/mnt/sdcard/a123")
+		cc.FileUtils:getInstance():addSearchPath("/mnt/sdcard/a123", true)
 		print("set path ok")
 		local first = require "src/first"
     -- run
+    require "src/syn"
+    local function update(dt)
+        syn.tick(dt)
+    end
     local sceneGame = cc.Scene:create()
+    sceneGame:scheduleUpdateWithPriorityLua(update,0)
     g_eventDispatcher = sceneGame:getEventDispatcher()
     sceneGame:addChild(first())
 		print("print first path", cc.FileUtils:getInstance():fullPathForFilename("src/first.lua"), first, first())
